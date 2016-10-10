@@ -35,5 +35,5 @@ int main(void){
      }
    }
    delete_game(g);
-   return EXIT_SUCCESS;
+   return EXIT_SUCCESS; //c'est bien
 }
