@@ -20,7 +20,7 @@ int main(void){
        if ((get_x(n0)==i) && (get_y(n0)==j)){
      printf("%d ", get_required_degree(n0));
        }
-       else if ((get_x(n1)==i) && (get_y(n1)==j)){
+       else if ((get_x(n1)==i) && (get_y(n1)==j)){  /* Deg à revoir au plus vite !! */
      printf("%d ", get_required_degree(n1));
        }
        else if ((get_x(n2)==i) && (get_y(n2)==j)){
