@@ -15,24 +15,16 @@ int main(void){
    game g = new_game(nb_nodes, nodes);
    game_over(g);
    game_node(g, 1);
-   for (int i = 5 ; i>=0; i--){
-     for (int j = 0; j<6; j++){
-       if ((get_x(n0)==i) && (get_y(n0)==j)){
-     printf("%d ", get_required_degree(n0));
-       }
-       else if ((get_x(n1)==i) && (get_y(n1)==j)){  /* Deg à revoir au plus vite !! */
-     printf("%d ", get_required_degree(n1));
-       }
-       else if ((get_x(n2)==i) && (get_y(n2)==j)){
-     printf("%d ", get_required_degree(n2));
-       }
-       else {
-     printf("- ");
-       }
-       if (j==5) {
-       printf("\n");
-       }
+   for (int x = 5 ; x>=0; x--){
+     for (int y = 0; y<6; y++){
+        int i = 0;
+        while (((get_x(nodes[i])!=x)||(get_y(nodes[i])!=y))&&(i<=nb_nodes)){
+           i++;
+        }
+        if (i<=nb_nodes){printf("%d ", get_required_degree(nodes[i]));}
+        else {printf("- ");}
      }
+     printf("\n");
    }
    delete_game(g);
    return EXIT_SUCCESS; //c'est bien
