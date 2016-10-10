@@ -15,13 +15,25 @@ int main(void){
    game g = new_game(nb_nodes, nodes);
    game_over(g);
    game_node(g, 1);
-   for (int x = 5 ; x>=0; x--){
-     for (int y = 0; y<6; y++){
+   /* -------------------- Déterminer position max ---------------------- */
+   int max=0;
+   for (int i = 0;i<nb_nodes;i++){
+      if (get_x(nodes[i])>max)
+         max = get_x(nodes[i]);
+      if (get_y(nodes[i])>max)
+         max = get_y(nodes[i]);
+   }
+   /* printf("max = %d\n",max); */
+
+   /* ------------------------------------------------------------------- */
+
+   for (int x = max ; x>=0; x--){
+     for (int y = 0; y<=max; y++){
         int i = 0;
-        while (((get_x(nodes[i])!=x)||(get_y(nodes[i])!=y))&&(i<=nb_nodes)){
+        while (((get_x(nodes[i])!=x)||(get_y(nodes[i])!=y))&&(i<nb_nodes)){
            i++;
         }
-        if (i<=nb_nodes){printf("%d ", get_required_degree(nodes[i]));}
+        if (i<nb_nodes){printf("%d ", get_required_degree(nodes[i]));}
         else {printf("- ");}
      }
      printf("\n");
