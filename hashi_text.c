@@ -3,6 +3,8 @@
 #include "game.h"
 #include "node.h"
 
+                                                //FONCTION MAX//
+
 int max_x_y(int nb_nodes, node nodes[]){ /* fonction qui calcul la position du noeud le + éloigné */
    int max=0;
    for (int i = 0;i<nb_nodes;i++){
@@ -14,12 +16,15 @@ int max_x_y(int nb_nodes, node nodes[]){ /* fonction qui calcul la position du n
    return max;
 }
 
+
+                                         // PARTIE PRINTF INSTANCE DE JEU//
+
 void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu créé */ // RAJOUT DE game g !!
    int exit = 0;
    int degre=0;
-   int numnode;
+   //int numnode;
    int *pc=&exit;
-   int *p_n=&numnode;
+   //int *p_n=&numnode;
    int *p_d=&degre;
    int choix =0;
    int coordx=0; //Ajout de ponts entre 2 nodes
@@ -29,19 +34,16 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
    while (exit!=1){
       int max = max_x_y(nb_nodes, nodes);
       printf("     -----------------------------------------------------------------  \n");
-      printf("                                 HASHIWOKAKERO                            ");
+      printf("                                 HASHIWOKAKERO                          \n");
       printf("\n");
-      printf("\n");
-
       for (int y = max ; y>=0; y--){
          for (int x = 0; x<=max; x++){
             int i = 0;
 
 
-            while (((get_x(nodes[i])!=x)||(get_y(nodes[i])!=y))&&(i<nb_nodes)){ // on vérifie si le x et le y des nodes correspondent aux x et y du de la grille
+            while ((i<nb_nodes) && ((get_x(nodes[i])!=x)||(get_y(nodes[i])!=y))){ // on vérifie si le x et le y des nodes correspondent aux x et y du de la grille
                i++;
             }
-
             if (i<nb_nodes){printf(" %d ", get_required_degree(nodes[i]));// si oui on print le node
                if ((degre >= 1 && y == 0 && i ==0 )){ //Parti pont
 
@@ -60,9 +62,9 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          printf("\n");
          printf("\n");
       }
-      printf("\n");
+      //printf("\n");
 
-
+                                                 // PARTIE INTERACTION//
 
       printf(" Choisissez une action 1:ajouter 2:supprimer 0:quitter\n ");
       scanf("%d",&choix);
@@ -75,11 +77,14 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          scanf("%d",&choix);
          int node_num = game_get_node_number(g,coordx,coordy); // A revoir pour la position
          printf("node numero %d\n",node_num);
+         printf("degre=%d\n",degre);
+
 
          if ( can_add_bridge_dir(g,node_num,EAST)){
-            add_bridge_dir(g,node_num,NORTH);
+            add_bridge_dir(g,node_num,EAST);
             *p_d = get_degree(g,node_num);
-         }
+            printf("degre1=%d\n",degre);
+        }
       }
       if (choix ==0)
          *pc = 1;
@@ -100,7 +105,7 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
 /*    int xnode = get_y(nodes[node_num]); */
 /*    for (int i=xnode+1;i<xvoisin;i++) */
 
-
+                                     //MAIN//
 
 int main(void){
    int tnodes [7][3]= {{0,0,3},{0,1,5},{0,2,2},{1,1,1},{1,2,2},{2,0,2},{2,2,3}};
