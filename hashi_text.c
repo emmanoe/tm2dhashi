@@ -3,7 +3,7 @@
 #include "game.h"
 #include "node.h"
 
-                                                //FONCTION MAX//
+                                                //FONCTION DIVERSE//
 
 int max_x_y(int nb_nodes, node nodes[]){ /* fonction qui calcul la position du noeud le + éloigné */
    int max=0;
@@ -16,49 +16,65 @@ int max_x_y(int nb_nodes, node nodes[]){ /* fonction qui calcul la position du n
    return max;
 }
 
-
                                          // PARTIE PRINTF INSTANCE DE JEU//
-
 void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu créé */ // RAJOUT DE game g !!
    int exit = 0;
-   int degre=0;
+   int ivoisini=-1;
    //int numnode;
    int *pc=&exit;
    //int *p_n=&numnode;
-   int *p_d=&degre;
+   int *p_i=&ivoisini;
    int choix =0;
    int coordx=0; //Ajout de ponts entre 2 nodes
    int coordy=0;
 
    printf("\n");
    while (exit!=1){
+      printf("choix=%d",choix);
       int max = max_x_y(nb_nodes, nodes);
       printf("     -----------------------------------------------------------------  \n");
       printf("                                 HASHIWOKAKERO                          \n");
       printf("\n");
-      for (int y = max ; y>=0; y--){
+      for (int y = max ; y>=0; y--){ // for moins de test et plus maniable" rajout des nodes vides"
          for (int x = 0; x<=max; x++){
             int i = 0;
-
-
-            while ((i<nb_nodes) && ((get_x(nodes[i])!=x)||(get_y(nodes[i])!=y))){ // on vérifie si le x et le y des nodes correspondent aux x et y du de la grille
-               i++;
+            if (game_get_node_number(g,x,y)!=-1){
+               i = game_get_node_number(g,x,y);
+               printf(" %d ",get_required_degree(nodes[i]));
             }
-            if (i<nb_nodes){printf(" %d ", get_required_degree(nodes[i]));// si oui on print le node
-               if ((degre >= 1 && y == 0 && i ==0 )){ //Parti pont
+            else
+               printf("   ");
 
-                  if (degre == 1)
-                        printf("-------------"); //si degré >= 1 on dessine le pont
 
-                  if (degre==2)
-                     printf("=============");
+               //PARTIE PONT
 
+            if (game_get_node_number(g,x,y)!=-1){
+               if (get_degree(g,game_get_node_number(g,x,y))>= 1){
+                  if  (get_degree(g,game_get_node_number(g,x,y)) ==1)
+                     if (choix == 2 || choix == 1){{
+                        if (game_get_node_number(g,x,y)!=ivoisini){
+                           printf("-----"); //si degré >= 1 on dessine le pont
+                           *p_i = get_neighbour_dir(g,i,EAST);
+                        }
+                        else printf("     ");
+                        }
+                     }
+                  if (get_degree(g,game_get_node_number(g,x,y))==2)
+                     if (choix ==2 ||choix ==  1){{
+                           *p_i = get_neighbour_dir(g,i,EAST);
+                           if (game_get_node_number(g,x,y)!=ivoisini){
+                              printf("=====");
+                           }
+                           else printf("    5");
+                        }
+                     }
                }
-               else printf("     "); //suivi d'espace pour l'esthétique
+               else if (get_degree(g,game_get_node_number(g,x,y))==0)
+               printf("     "); //suivi d'espace pour l'esthétique
             }
-            else if (degre ==0)
-               printf("        ");  // sinon on print " "
+            else printf("     ");
          }
+         *p_i = -1; // on réinitialise ivoisini
          printf("\n");
          printf("\n");
       }
@@ -73,18 +89,16 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          scanf("%d",&coordx);
          printf(" veuiller entrer la coordonnée \"y\" de l'île:\n ");
          scanf("%d",&coordy);
-         printf(" veuiller choisir une direction 1:WEST 2:EAST 3:NORTH 4:SOUTH \n ");
+         printf(" veuiller choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
          scanf("%d",&choix);
          int node_num = game_get_node_number(g,coordx,coordy); // A revoir pour la position
          printf("node numero %d\n",node_num);
-         printf("degre=%d\n",degre);
 
 
          if ( can_add_bridge_dir(g,node_num,EAST)){
             add_bridge_dir(g,node_num,EAST);
-            *p_d = get_degree(g,node_num);
-            printf("degre1=%d\n",degre);
-        }
+
+         }
       }
       if (choix ==0)
          *pc = 1;
