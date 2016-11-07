@@ -36,10 +36,8 @@ bool test_new_game() {
 
 bool test_delete_game() {
    game g = new_game(EXAMPLE_NB_NODE,nodes);
-   node test = game_node(g,1);
    bool r=false;;
-   delete_game(g); //  BUG DELETE_GAME ??????
-   node test2 = game_node(g,1);
+   delete_game(g);
    if (g==NULL)
       r = true;
    r= r && test_equality_bool(true,r,"pb new game");
@@ -48,7 +46,7 @@ bool test_delete_game() {
 }
 
 
-bool test_copy_game() {}
+//bool test_copy_game() {}
 
 bool test_game_nb_nodes(){
    game g = new_game(EXAMPLE_NB_NODE,nodes);
@@ -84,7 +82,7 @@ int main (int argc, char *argv[])
    result = result && test_new_game();
    result = result && test_game_nb_nodes();
    result = result && test_game_node();
-   //result = result && test_delete_game();
+   result = result && test_delete_game();
    //result = result && test_copy_game();
    if (result)
       return EXIT_SUCCESS;

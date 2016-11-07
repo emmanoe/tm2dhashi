@@ -33,9 +33,7 @@ return d;
                                          // PARTIE PRINTF INSTANCE DE JEU//
 void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu créé */ // RAJOUT DE game g !!
    int exit = 0;
-   //int numnode;
    int *pc=&exit;
-   //int *p_n=&numnode;
    int choix =0;
    int coordx=0; //Ajout de ponts entre 2 nodes
    int coordy=0;
@@ -63,10 +61,9 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
 
             if (game_get_node_number(g,x,y)!=-1){ //on teste si le noeud est existant !
                if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==1)/*choix == 2 || choix == 1*/{
-                        // if (game_get_node_number(g,x,y)!=ivoisini){
-                              if (x+1<max &&  game_get_node_number(g,x+1,y)==-1 )
-                                 printf("-------------"); //si degré >= 1 on dessine le pont
-                              else printf("-----");
+                  if (x+1<max &&  game_get_node_number(g,x+1,y)==-1 )
+                     printf("-------------"); //si degré >= 1 on dessine le pont
+                  else printf("-----");
                }
 
                if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==2)
@@ -108,7 +105,7 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          }
          printf("\n");
          }
-   //printf("\n");
+
 
                                                  // PARTIE INTERACTION//
 
@@ -132,22 +129,13 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
       }
       if (choix ==0)
          *pc = 1;
-      //         dessiner_bridge(g,node_num,droite);
    }
 }
 
 
 
 
-   //  printf("degree %d = %d\n",node_num,get_degree(g, node_num));
-   //}
 
-
-
-/*    int ivoisin= get_neighbour_dir(g,node_num,d); /\*index du noeud voisin **\/ */
-/*    int xvoisin = get_y( nodes[ivoisin]); */
-/*    int xnode = get_y(nodes[node_num]); */
-/*    for (int i=xnode+1;i<xvoisin;i++) */
 
                                      //MAIN//
 
