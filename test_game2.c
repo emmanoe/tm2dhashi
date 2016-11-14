@@ -36,17 +36,25 @@ bool test_new_game() {
 
 bool test_delete_game() {
    game g = new_game(EXAMPLE_NB_NODE,nodes);
-   bool r=false;;
+   bool r=true;
    delete_game(g);
    if (g==NULL)
-      r = true;
+      r = false;
    r= r && test_equality_bool(true,r,"pb new game");
 
    return r;
 }
 
 
-//bool test_copy_game() {}
+
+bool test_copy_game() {
+   game g = new_game(EXAMPLE_NB_NODE,nodes);
+   game cpg = copy_game(g);
+   if (cpg == NULL)
+      return false;
+   return true;
+}
+
 
 bool test_game_nb_nodes(){
    game g = new_game(EXAMPLE_NB_NODE,nodes);
@@ -65,7 +73,7 @@ bool test_game_node() {
 
    for (int i=0;i<EXAMPLE_NB_NODE;i++){
       n = game_node(g,i);
-      if (n==NULL) // Cas erreur de segmentation non traité !
+      if (n==NULL)
          return false;
       r = r && test_equality_bool(true,r,"pb game_node");
       r = r && test_equality_int(get_x(n),vals[i][0],"pb game_node");
@@ -83,7 +91,7 @@ int main (int argc, char *argv[])
    result = result && test_game_nb_nodes();
    result = result && test_game_node();
    result = result && test_delete_game();
-   //result = result && test_copy_game();
+   result = result && test_copy_game();
    if (result)
       return EXIT_SUCCESS;
    else
