@@ -27,7 +27,7 @@ depends :
 .PHONY : clean test
 
 clean :
-	rm -f $(GENERES)
+	rm -f *.o $(GENERES)
 
 test : test_game2
 	./test_game2
