@@ -1,11 +1,13 @@
+#ifndef _NODE_C_
+#define _NODE_C_
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 struct node_s {
-   int x;// x-axe from left to right
-   int y;// y-axe from bottom to top
-   int required_degree;
+   int x; // axe x de gauche à droite
+   int y; // axe y de bas en haut
+   int required_degree; // numéro noeud
 };
 
 typedef struct node_s* node;
@@ -47,3 +49,5 @@ int get_required_degree (node n){
    printf("Not enought memory\n"); // Si n n'existe pas, on affiche l'erreur
    exit(EXIT_FAILURE);
 }
+
+#endif

@@ -1,7 +1,9 @@
+#ifndef _TEST_GAME2_
+#define _TEST_GAME2_
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include "game.h"
+#include "game.c"
 #include "test_toolbox.h"
 
 
@@ -97,3 +99,5 @@ int main (int argc, char *argv[])
    else
       return EXIT_FAILURE;
 }
+
+#endif

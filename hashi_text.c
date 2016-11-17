@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
-#include "node.h"
+#include "game.c"
+#include "node.c"
 
 
 
@@ -9,9 +9,9 @@
 
 /*
  * Description: system est une fonction qui execute une "shell built-in command" commande intégrée dans le shell
- * Idéal pour faire effacer effacer les données sur l'interpréteur de commande avant de l'ancer notre programme.
+ * Idéal pour faire effacer les données sur l'interpréteur de commande avant de l'ancer notre programme.
  * Parameter :
- * char *command la commande en question.
+ * char *command la commande à executer.
  * Return: Un entier qui interprète l'état de l'execution de la commande.
  */
 
@@ -113,24 +113,33 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
 
 
 
-               //PARTIE PONT
+                 //PARTIE PONT
 
             if (game_get_node_number(g,x,y)!=-1){ //on teste si le noeud est existant !
                if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==1){ // Si il y a un pont à ce noeud
-                  if (x+1<max &&  game_get_node_number(g,x+1,y)==-1 ) // mais si jamais on tombe sur un trou (-1)
-                     printf("-------------"); // On affiche un plus long pont
-                  else printf("-----");
+                  //if (x+1<max &&  game_get_node_number(g,x+1,y)==-1 ) // mais si jamais on tombe sur un trou (-1)
+                     for (int i=0;i<5;i++)
+                        printf("-"); // On affiche un le pont
+                  int ind = x+1;
+                  if (x+1 < max &&  game_get_node_number(g,x+1,y)==-1 ){
+                     while (game_get_node_number(g,ind,y)==-1)
+                        ind++;
+                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
+                        printf("-");
+                  }
                }
 
                if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==2)
-               {{
-                     if (x+1<max &&  game_get_node_number(g,x+1,y)==-1 )
-                        printf("=============");
-                     else
-                        printf("=====");
+               { for (int i=0;i<5;i++)
+                        printf("="); // On affiche un le pont
+                  int ind = x+1;
+                  if (x+1 < max &&  game_get_node_number(g,x+1,y)==-1 ){
+                     while (game_get_node_number(g,ind,y)==-1)
+                        ind++;
+                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
+                        printf("=");
                   }
-                     //else printf("    5");
-                  }
+               }
 
                   else if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==0)
                printf("     "); //suivi d'espace pour l'esthétique
@@ -141,6 +150,9 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
             }
          }
          printf("\n");
+
+               //PARTIE PONT VERTICAL | ou H
+
          for (int x =0;x<max;x++){
             if (game_get_node_number(g,x,y)!=-1 && game_get_node_number(g,x,y-1)!=-1){
                if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==1 || get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==1){
@@ -186,6 +198,8 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          printf(" veuiller choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
          scanf("%d",&choix2);
 
+
+         //AJOUTER BRIDGES
          node_num = game_get_node_number(g,coordx,coordy); // A revoir pour la position
 
          if ( can_add_bridge_dir(g,node_num,intostr(choix2))){
@@ -199,6 +213,9 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          }
       }
                                                  // SOUS MENU INTERACTION //
+
+
+      // SUPPRIMER BRIDGES !
       if (choix == 2){
         sup: // étiquette pour revenir à l'option supprimer sans préciser à nouveau que l'on veut supprimer un pont
          printf("Quelles sont les coordonnées 1:précédent 2:autres\n");
@@ -224,13 +241,17 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
             printf(" veuiller choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
             scanf("%d",&choix2);
 
-            if (game_get_node_number(g,coordx,coordy)==-1 || (get_degree(g,game_get_node_number(g,coordx,coordy)!=-1 && get_degree_dir(g,node_num,intostr(choix2)<=0)))){
+            node_num = game_get_node_number(g,coordx,coordy);
+
+            if (game_get_node_number(g,coordx,coordy)==-1 || get_degree_dir(g,node_num,intostr(choix2))<=0){
                printf("\n");
+               printf("node nb=%d\n",game_get_node_number(g,coordx,coordy));
                printf("impossible de supprimer de pont à cet endroit !\n");
                goto debut;
             }
-
-            del_bridge_dir(g,node_num,intostr(choix2));
+            else if(game_get_node_number(g,coordx,coordy)!=-1 && get_degree_dir(g,node_num,intostr(choix2))!=0){
+               del_bridge_dir(g,node_num,intostr(choix2));
+            }
          }
          else if (choix == 2 && get_degree(g,node_num)==0){
             printf("\n");
@@ -251,12 +272,23 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
 
 int main(void){
    system("clear");  // execute a shel built-in cmd !!
+
    int tnodes [7][3]= {{0,0,3},{0,1,5},{0,2,2},{1,1,1},{1,2,2},{2,0,2},{2,2,3}};
    node nodes[7]; // Tableau de nodes
    for (int i=0;i<7;i++)
       nodes[i]= new_node(tnodes[i][0],tnodes[i][1],tnodes[i][2]); //On rempli le tableau de node !
+
    game g = new_game(7, nodes);
-   game_print(7,g, nodes);;
+   game_print(7,g, nodes);
+
+   if( game_over(g)){
+      printf("\n");
+      printf("\n");
+      printf("GAME OVER                            \n");
+   }
+   else if(!game_over(g))
+      printf("CONGRATULATION YOU WIN\n");
+
    delete_game(g);
    return EXIT_SUCCESS;
 }

@@ -6,6 +6,7 @@ ARFLAGS = -r -v
 LOBJETS = game.o node.o
 SOURCES = hashi_text.c
 OBJETS = hashi_text.o
+OBJETSTEST = test_game2.c test_toolbox.c
 GENERES = hashi_text hashi_text.o libhashi.a test_game2
 
 all : libhashi.a hashi_text test_game2
@@ -16,13 +17,17 @@ libhashi.a : $(LOBJETS)
 hashi_text : $(OBJETS)
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
-test_game2 :
-	gcc -std=c99 -Wall -g test_game2.c game.o node.o test_toolbox.c -o test_game2
+test_game2 : $(OBJETSTEST) $(OBJETS)
+	$(CC) $(CFLAGS) $(OBJETSTEST) -o $@
+
 
 depends :
-	$(CC) $(CFLAGS) -MM $(SOURCES)
+	$(CC) $(CFLAGS) -MM $(SOURCES) > dependance.txt
 
-.PHONY : clean
+.PHONY : clean test
 
 clean :
 	rm -f $(GENERES)
+
+test : test_game2
+	./test_game2
