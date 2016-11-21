@@ -26,6 +26,11 @@ typedef const struct game_s* cgame;
 
 game new_game(int nb_nodes, node *nodes){
    game g = (game) malloc(sizeof(struct game_s)); // Allocation dynamique
+   if (g == NULL){
+      printf("Not enought memory !\n");
+      exit(EXIT_FAILURE);
+   }
+
    g -> set_of_nodes = nodes; //Tableau de nodes
    g -> nb_nodes = nb_nodes;
 
@@ -67,7 +72,6 @@ void delete_game (game g){
    return;
 }
 
-
 game copy_game (cgame g_src){
    game g=(game) malloc(sizeof(g_src));
    if (g != NULL){ // On recopie tous les champs de la structure game !
@@ -103,7 +107,7 @@ bool game_over (cgame g){
             return 1;
          }
       }
-   }
+   } //////// !!!!!!! AJOUTER LA CONNEXITé !!!!!!!
    return EXIT_FAILURE;
 }
 
@@ -173,7 +177,7 @@ bool can_add_bridge_dir (cgame g, int node_num, dir d){
 
    if (g->bridges_already_build[node_num][entier]>=2 || get_neighbour_dir(g, node_num, d) == -1)
       return 0;
-   return 1;
+   return 1; ///////// AJOUTER LA VERIFICATION POUR LES CROISEMENTS !!!!!!!!!!!
 }
 
 void add_bridge_dir (game g, int node_num, dir d){
