@@ -207,17 +207,20 @@ void add_bridge_dir (game g, int node_num, dir d){
       if (can_add_bridge_dir(g, node_num, d)){
          g->bridges_already_build[node_num][entier]++;
 
-         if (d==0){ // NORTH
-            g->bridges_already_build[neighbour_dir][2]++;
-         }
-         if (d==1){ // WEST
-            g->bridges_already_build[neighbour_dir][3]++;
-         }
-         if (d==2){ //SOUTH
-            g->bridges_already_build[neighbour_dir][0]++;
-         }
-         if (d==3){ //EAST
-            g->bridges_already_build[neighbour_dir][1]++;
+         switch (entier) // éviter répétition if sur la même variable "entier"
+         {
+            case 0:
+               g->bridges_already_build[neighbour_dir][2]++;
+               break;
+            case 1:  // WEST
+               g->bridges_already_build[neighbour_dir][3]++;
+               break;
+            case 2 : //SOUTH
+               g->bridges_already_build[neighbour_dir][0]++;
+               break;
+            case 3: //EAST
+               g->bridges_already_build[neighbour_dir][1]++;
+               break;
          }
       }
    }
