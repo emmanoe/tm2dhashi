@@ -34,7 +34,7 @@ game new_game(int nb_nodes, node *nodes){
    }
 
    for (int i=0;i<nb_nodes;i++){
-      t[i] = malloc (sizeof(int)); //Puis on alloue chacun des sous-tableaux, t[i][j] stoque les informations sur le degrés de nodes[i]
+      t[i] = malloc (sizeof(int)); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrés de nodes[i]
       if (t[i]==NULL){
          printf("Not enought memory!\n");
          exit(EXIT_FAILURE);
@@ -202,9 +202,23 @@ bool can_add_bridge_dir (cgame g, int node_num, dir d){
 void add_bridge_dir (game g, int node_num, dir d){
    int entier =d ;
 
-   if (can_add_bridge_dir(g, node_num,d)){
-      g->bridges_already_build[node_num][entier]++;
+   if (can_add_bridge_dir(g, node_num, d)){
       int neighbour_dir = get_neighbour_dir(g,node_num,d);
-      g->bridges_already_build[neighbour_dir][(entier+1)]++;
+      if (can_add_bridge_dir(g, node_num, d)){
+         g->bridges_already_build[node_num][entier]++;
+
+         if (d==0){ // NORTH
+            g->bridges_already_build[neighbour_dir][2]++;
+         }
+         if (d==1){ // WEST
+            g->bridges_already_build[neighbour_dir][3]++;
+         }
+         if (d==2){ //SOUTH
+            g->bridges_already_build[neighbour_dir][0]++;
+         }
+         if (d==3){ //EAST
+            g->bridges_already_build[neighbour_dir][1]++;
+         }
+      }
    }
 }
