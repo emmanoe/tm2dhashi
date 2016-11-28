@@ -6,7 +6,7 @@ ARFLAGS = -r -v
 LOBJETS = game.o node.o
 SOURCES = hashi_text.c
 OBJETS = hashi_text.o
-OBJETSTEST = test_game2.c test_toolbox.c
+OBJETSTEST =game.c node.c test_game2.c test_toolbox.c
 GENERES = hashi_text hashi_text.o libhashi.a test_game2
 
 all : libhashi.a hashi_text test_game2

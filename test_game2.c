@@ -1,9 +1,8 @@
-#ifndef _TEST_GAME2_
-#define _TEST_GAME2_
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include "game.c"
+#include "game.h"
+#include "node.h"
 #include "test_toolbox.h"
 #include <assert.h>
 
@@ -74,9 +73,9 @@ bool test_copy_game() {
    game cpg = copy_game(g);
 
    for (int i =0;i<EXAMPLE_NB_NODE;i++){
-   if (cpg ->set_of_nodes[i]->required_degree != g ->set_of_nodes[i]->required_degree
-       || (cpg ->set_of_nodes[i]->x != g ->set_of_nodes[i]->x)
-       || (cpg ->set_of_nodes[i]->y != g ->set_of_nodes[i]->y)){
+      if ((get_required_degree(game_node(cpg, i)) != get_required_degree(game_node(g, i)))
+       || (get_x(game_node(cpg, i)) != get_x(game_node(g, i)))
+          || (get_y(game_node(cpg, i)) != get_y(game_node(g, i)))){
       r = false;
       break;
    }
@@ -133,5 +132,3 @@ int main (int argc, char *argv[])
       return EXIT_FAILURE;
    }
 }//////// AJOUTER BILAN TOTAL DES TEST!!
-
-#endif
