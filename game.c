@@ -14,7 +14,16 @@ struct game_s{
 typedef struct game_s* game;
 typedef const struct game_s* cgame;
 
-game new_game(int nb_nodes, node *nodes){
+/**
+ * @brief Create a new game given a set of nodes.
+ * The nodes of the created game are copies of the ones given as argument.
+ * @param nb_nodes number of nodes of g
+ * @param nodes array of nodes. T
+ * @param maximal number of bridges allowed between two nodes of the game
+ * @param number of directions allowed in the game. The possible values for this parameter are 4 or 8.
+ * @return a pointer toward the generated game
+ **/
+game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
    game g = (game) malloc(sizeof(struct game_s)); // Allocation dynamique du new_game
    if (g == NULL){
       printf("Not enought memory !\n");
@@ -126,7 +135,7 @@ bool game_over (cgame g){
             return 1;
          }
       }
-   } //////// !!!!!!! AJOUTER LA CONNEXITé !!!!!!!
+   } //////// !!!!!!! AJOUTER LA CONNEXITE !!!!!!!
    return EXIT_FAILURE;
 }
 

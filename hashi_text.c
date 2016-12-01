@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game.c"
-#include "node.c"
+#include "game.h"
+#include "node.h"
 
 
 
@@ -245,7 +245,6 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
 
             if (game_get_node_number(g,coordx,coordy)==-1 || get_degree_dir(g,node_num,intostr(choix2))<=0){
                printf("\n");
-               printf("node nb=%d\n",game_get_node_number(g,coordx,coordy));
                printf("impossible de supprimer de pont à cet endroit !\n");
                goto debut;
             }
@@ -278,7 +277,7 @@ int main(void){
    for (int i=0;i<7;i++)
       nodes[i]= new_node(tnodes[i][0],tnodes[i][1],tnodes[i][2]); //On rempli le tableau de node !
 
-   game g = new_game(7, nodes);
+   game g = new_game(7, nodes,9,4);
    game_print(7,g, nodes);
 
    if( game_over(g)){

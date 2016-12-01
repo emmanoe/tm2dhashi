@@ -13,9 +13,7 @@
  * @enum dir_e
  * @brief The enumeration of possible directions of an edge
  **/
-typedef enum dir_e {NORTH, WEST, SOUTH, EAST} dir;
-
-#define NB_DIRS 4
+typedef enum dir_e {NORTH, WEST, SOUTH, EAST, NW, SW, SE, NE} dir;
 
 
 /**
@@ -37,9 +35,11 @@ typedef const struct game_s* cgame;
  * The nodes of the created game are copies of the ones given as argument.
  * @param nb_nodes number of nodes of g
  * @param nodes array of nodes. T
+ * @param maximal number of bridges allowed between two nodes of the game
+ * @param number of directions allowed in the game. The possible values for this parameter are 4 or 8.
  * @return a pointer toward the generated game
  **/
-game new_game (int nb_nodes, node *nodes);
+game new_game (int nb_nodes, node *nodes, int nb_max_bridges, int nb_dir);
 
 /**
  * @brief Destroy the game and free allocated memory
@@ -58,6 +58,16 @@ game copy_game (cgame g_src);
  * @brief Return the number of nodes of the game g
  */
 int game_nb_nodes (cgame g);
+
+/**
+ * @brief Return the number direction of the game g
+ */
+int game_nb_dir (cgame g);
+
+/**
+ * @brief Return the number max of bridges in the game g
+ */
+int game_nb_max_bridges (cgame g);
 
 
 /**
