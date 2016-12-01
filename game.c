@@ -34,14 +34,14 @@ game new_game(int nb_nodes, node *nodes){
    }
 
    for (int i=0;i<nb_nodes;i++){
-      t[i] = malloc (sizeof(int)); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrés de nodes[i]
+      t[i] = malloc (sizeof(int)); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
       if (t[i]==NULL){
          printf("Not enought memory!\n");
          exit(EXIT_FAILURE);
       }
    }
    for (int i = 0; i< nb_nodes;i++){
-      for (int j=0; j<4;j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
+      for (int j=0; j<4;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
          t[i][j] = 0; // Initialisé à 0
       }
    }
@@ -204,7 +204,7 @@ void add_bridge_dir (game g, int node_num, dir d){
 
    if (can_add_bridge_dir(g, node_num, d)){
       int neighbour_dir = get_neighbour_dir(g,node_num,d);
-      if (can_add_bridge_dir(g, node_num, d)){
+      if (can_add_bridge_dir(g, neighbour_dir, d)){
          g->bridges_already_build[node_num][entier]++;
 
          switch (entier) // éviter répétition if sur la même variable "entier"
