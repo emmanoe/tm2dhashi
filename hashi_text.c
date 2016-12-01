@@ -9,7 +9,7 @@
 
 /*
  * Description: system est une fonction qui execute une "shell built-in command" commande intégrée dans le shell
- * Idéal pour faire effacer les données sur l'interpréteur de commande avant de l'ancer notre programme.
+ * Idéal pour faire effacer les données sur l'interpréteur de commande avant de lancer notre programme.
  * Parameter :
  * char *command la commande à executer.
  * Return: Un entier qui interprète l'état de l'execution de la commande.
@@ -85,7 +85,7 @@ void printspace(game g,int x,int y){ // Print de l'espace pour représenter les 
  * -g le jeu à afficher
  * -nodes[] le tableau de noeuds
  */
-void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu créé */
+void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu créée */
    int choix =0; //Choix variables nécéssaire lors intéraction avec la machine
    int choix2=0;
    int coordx=0;  //Stock des valeurs de coordonnées lors de l'intéraction
@@ -108,7 +108,7 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
                i = game_get_node_number(g,x,y);
                printf(" %d ",get_required_degree(nodes[i]));
             }
-            else if(x>0 && game_get_node_number(g,x-1,y)!=-1) // Si le noeud n'existe pas pour (x,y) on affiche un espace
+            else  // Si le noeud n'existe pas pour (x,y) on affiche un espace
                printspace(g,x,y);
 
 
@@ -183,10 +183,10 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
          break;
 
       if (choix == 1){
-         printf(" veuiller entrer la coordonnée \"x\" de l'île:\n ");
+         printf(" veuillez entrer la coordonnée \"x\" de l'île:\n ");
          scanf("%d",&coordx);
 
-         printf(" veuiller entrer la coordonnée \"y\" de l'île:\n ");
+         printf(" veuillez entrer la coordonnée \"y\" de l'île:\n ");
          scanf("%d",&coordy);
 
          if (game_get_node_number(g,coordx,coordy)==-1){
@@ -195,7 +195,7 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
             goto debut;
          }
 
-         printf(" veuiller choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
+         printf(" veuillez choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
          scanf("%d",&choix2);
 
 
