@@ -1,0 +1,6 @@
+TODO List:
+        Implementer et tester int game_nb_dir(cgame g) , int game_nb_max_bridges(cgame g) -"Amaury"
+        Ajouter les nouvelles directions (NW, SW, SE, NE) -"Johann" et tester toutes les fonctions qui en dépendent -"Emmanoe"
+
+autre:
+        Urgent: faire vos test_game*.c !
