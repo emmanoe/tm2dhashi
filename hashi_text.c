@@ -9,7 +9,7 @@
 
 /*
  * Description: system est une fonction qui execute une "shell built-in command" commande intégrée dans le shell
- * Idéal pour faire effacer les données sur l'interpréteur de commande avant de lancer notre programme.
+ * Idéal pour effacer les données sur l'interpréteur de commande avant de lancer notre programme.
  * Parameter :
  * char *command la commande à executer.
  * Return: Un entier qui interprète l'état de l'execution de la commande.
@@ -108,7 +108,7 @@ void game_print(int nb_nodes,game g, node nodes[]){ /* Affiche l'instance de jeu
                i = game_get_node_number(g,x,y);
                printf(" %d ",get_required_degree(nodes[i]));
             }
-            else  // Si le noeud n'existe pas pour (x,y) on affiche un espace
+            else if(x>0 && game_get_node_number(g,x-1,y)!=-1) // Si le noeud n'existe pas pour (x,y) on affiche un espace
                printspace(g,x,y);
 
 
