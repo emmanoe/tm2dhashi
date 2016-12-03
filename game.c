@@ -14,15 +14,7 @@ struct game_s{
 typedef struct game_s* game;
 typedef const struct game_s* cgame;
 
-/**
- * @brief Create a new game given a set of nodes.
- * The nodes of the created game are copies of the ones given as argument.
- * @param nb_nodes number of nodes of g
- * @param nodes array of nodes. T
- * @param maximal number of bridges allowed between two nodes of the game
- * @param number of directions allowed in the game. The possible values for this parameter are 4 or 8.
- * @return a pointer toward the generated game
- **/
+
 game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
    game g = (game) malloc(sizeof(struct game_s)); // Allocation dynamique du new_game
    if (g == NULL){
@@ -42,8 +34,8 @@ game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
       exit(EXIT_FAILURE);
    }
 
-   for (int i=0;i<nb_nodes;i++){
-      t[i] = malloc (sizeof(int)); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
+   for (int i=0;i < nb_nodes ;i++){
+      t[i] = malloc (sizeof(int)*4); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
       if (t[i]==NULL){
          printf("Not enought memory!\n");
          exit(EXIT_FAILURE);
@@ -76,7 +68,7 @@ void delete_game (game g){
 }
 
 game copy_game (cgame g_src){
-   game g=(game) malloc(sizeof(g_src));
+   game g=(game) malloc(sizeof(struct game_s));
    if (g != NULL){ // On recopie tous les champs de la structure game !
       g -> nb_nodes = game_nb_nodes(g_src);
 
@@ -86,22 +78,24 @@ game copy_game (cgame g_src){
          exit(EXIT_FAILURE);
       }
 
-      for (int i=0;i<g->nb_nodes;i++){
-         t[i] = malloc (sizeof(int)); //Puis on alloue chacun des sous-tableaux, t[i][j] stoque les informations sur le degrés de nodes[i]
+      for (int i=0;i< game_nb_nodes(g_src) ;i++){
+         t[i] = malloc (sizeof(int)*4); //Puis on alloue chacun des sous-tableaux, t[i][j] pour stoques les informations sur le degrés de nodes[i]
          if (t[i]==NULL){
             printf("Not enought memory!\n");
             exit(EXIT_FAILURE);
          }
       }
-      for (int i = 0; i< g->nb_nodes;i++){
+
+      for (int i = 0; i< game_nb_nodes(g_src);i++){ // on copie les informations de tous les nodes du game
          for (int j=0; j<4;j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
-            t[i][j] = get_degree_dir(g_src,i,j); // Initialisé à 0
+            dir d = j;
+            t[i][j] = get_degree_dir(g_src,i,d);
          }
       }
 
       g -> bridges_already_build=t;
 
-      g->set_of_nodes = malloc(sizeof(node)*g->nb_nodes);
+      g->set_of_nodes = malloc(sizeof(node) * game_nb_nodes(g_src));
       for (int i=0; i< game_nb_nodes(g); i++){
          g -> set_of_nodes[i] = new_node(get_x(game_node(g_src,i)),get_y(game_node(g_src,i)),get_required_degree(game_node(g_src,i)));
       }
