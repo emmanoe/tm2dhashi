@@ -35,14 +35,14 @@ game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
    }
 
    for (int i=0;i < nb_nodes ;i++){
-      t[i] = malloc (sizeof(int)*4); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
+      t[i] = malloc (sizeof(int)*nb_dir); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
       if (t[i]==NULL){
          printf("Not enought memory!\n");
          exit(EXIT_FAILURE);
       }
    }
    for (int i = 0; i< nb_nodes;i++){
-      for (int j=0; j<4;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
+      for (int j=0; j<nb_dir;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
          t[i][j] = 0; // Initialisé à 0
       }
    }
@@ -195,9 +195,9 @@ int game_get_node_number (cgame g, int x, int y){
 }
 
 bool can_add_bridge_dir (cgame g, int node_num, dir d){
-   int entier = d ;
+   //int entier = d ;
 
-   if (g->bridges_already_build[node_num][entier]>=2 || get_neighbour_dir(g, node_num, d) == -1)
+   if (/* g->bridges_already_build[node_num][entier]>=2 || */ get_neighbour_dir(g, node_num, d) == -1)
       return 0;
    return 1; ///////// AJOUTER LA VERIFICATION POUR LES CROISEMENTS !!!!!!!!!!!
 }
