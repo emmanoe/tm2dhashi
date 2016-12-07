@@ -145,7 +145,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
    int choix =0; int choix2=0; int coordx=0; int coordy=0; int node_num=0; // variables nécéssaire lors intéraction avec la machine
 
-
+   char msg[256] = " "; // tableau de caractère qui stockera les messages d'erreurs
 
    printf("\n");
 
@@ -435,7 +435,11 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
                                                  // PARTIE INTERACTION//
 
+      printf("%s\n",msg); // Print le message d'erreur
+      sprintf(msg," "); // Vide le tableau de message d'erreur
+
       printf(" Choisissez une action 1:ajouter 2:supprimer 0:quitter\n ");
+
       scanf("%d",&choix);
 
       if (choix ==0)
@@ -449,8 +453,8 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
          scanf("%d",&coordy);
 
          if (game_get_node_number(g,coordx,coordy)==-1){
-            printf("\n");
-            printf("impossible d'ajouter de pont à cet endroit !\n");
+            //printf("\n");
+            sprintf(msg,"impossible d'ajouter de pont à cet endroit !\n");
             goto debut;
          }
 
@@ -466,17 +470,17 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
          }
          else if (!(can_add_bridge_dir(g,node_num,intostr(choix2)))) {
-            printf("\n");
-            printf("Vous ne pouvez pas ajouter de pont vers cette direction.\n");
-            printf("\n");
+            //printf("\n");
+            sprintf(msg,"Vous ne pouvez pas ajouter de pont vers cette direction.\n");
+            //printf("\n");
          }
 
          else if ( get_degree_dir(g,node_num,intostr(choix2)) >= game_nb_max_bridges ){
 
 
-            printf("\n");
-            printf("Vous ne pouvez pas ajouter de pont vers cette direction car le nombre de ponts autorisé a été atteint .\n");
-            printf("\n");
+            //printf("\n");
+            sprintf(msg,"Vous ne pouvez pas ajouter de pont vers cette direction car le nombre de ponts autorisé a été atteint .\n");
+            //printf("\n");
          }
 
       }
@@ -494,9 +498,9 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
          }
 
          else if (choix == 1 && get_degree(g,node_num)==0){
-            printf("\n");
-            printf("Il n'y a rien à supprimer");
-            printf("\n");
+            //printf("\n");
+            sprintf(msg,"Il n'y a rien à supprimer");
+            //printf("\n");
          }
 
          if (choix== 2 && get_degree(g,node_num)>0){
@@ -512,18 +516,19 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
             node_num = game_get_node_number(g,coordx,coordy);
 
             if (game_get_node_number(g,coordx,coordy)==-1 || get_degree_dir(g,node_num,intostr(choix2))<=0){
-               printf("\n");
-               printf("impossible de supprimer de pont à cet endroit !\n");
+               //printf("\n");
+               sprintf(msg,"impossible de supprimer de pont à cet endroit !\n");
                goto debut;
             }
+
             else if(game_get_node_number(g,coordx,coordy)!=-1 && get_degree_dir(g,node_num,intostr(choix2))!=0){
                del_bridge_dir(g,node_num,intostr(choix2));
             }
          }
          else if (choix == 2 && get_degree(g,node_num)==0){
-            printf("\n");
-            printf("Il n'y a rien à supprimer");
-            printf("\n");
+            //printf("\n");
+            sprintf(msg,"Il n'y a rien à supprimer");
+            //printf("\n");
          }
          else goto sup;
       }
