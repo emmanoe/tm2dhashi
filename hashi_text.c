@@ -149,11 +149,25 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
    printf("\n");
 
+
+
   debut: //étiquette début pour éviter de quitter le jeu soudainement !!
 
    while (1){
+      system("clear");
 
       int max = max_x_y(nb_nodes, nodes);
+      printf("- Configuration du jeu -\n");
+
+      printf("\n");
+
+      printf("Nombre maximum de ponts entre 2 îles : %d\n",game_nb_max_bridges);
+
+      printf("\n");
+
+      printf("Nombre de directions pris en comptes : 8 \n");
+
+      printf("\n");
 
       printf("     -----------------------------------------------------------------  \n");
 
@@ -175,7 +189,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
 
 
-                 //PARTIE PONT HORIENTAL
+                 //PARTIE PONT HORIZENTAL
 
 
                if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) == 1 ){ // Si il y a 1 pont à ce noeud vers l'EST et que Le nombre
@@ -279,21 +293,46 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
             }
 
-            else if(x>0 && game_get_node_number(g,x-1,y)!=-1){ // Si le noeud n'existe pas pour (x,y) on affiche un espace
 
-               printspace(g,x,y,nb_nodes,nodes);
+            else if(x>0 && game_get_node_number(g,x-1,y) != -1){ // Si le noeud n'existe pas pour (x,y) on affiche un espace
+
+               if (game_get_node_number(g,x,y-1) != -1 || game_get_node_number(g, x, y+1) != -1){
+
+                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 1) // On verifie qu'il existe un noeud aux deux etrémités
+                                                                                                                         // du pont et si ils ont un pont qui passe par le vide
+                     printf(" |");
+
+                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 2)
+
+                     printf(" H");
+
+                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 3)
+
+                     printf(" *");
+
+                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 4)
+
+                     printf(" #");
+
+                  else printspace(g,x,y,nb_nodes,nodes);// On print l'espace si on tombe sur le cas par default
+
+               }
+
             }
-
          }
+
+
+
 
          printf("\n");
 
                //PARTIE PONT VERTICAL | ou H
 
-         for (int x =0;x<max;x++){
+         for (int x =0;x<=max;x++){
 
-            if (game_get_node_number(g,x,y)!=-1 && game_get_node_number(g,x,y-1)!=-1){
-               if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==1 || get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 1){
+            if (game_get_node_number(g,x,y) != -1 && game_get_node_number(g,x,y-1) != -1){ // Si le noeud et son voisin du bas existe
+
+               if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 1 || get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 1){
 
                   printf(" |");
                   printf("      ");
@@ -327,15 +366,71 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
                }
 
             }
-            else if (game_get_node_number(g,x,y)==-1)
 
-               printf("      ");
+            else if (game_get_node_number(g,x,y) != -1 && game_get_node_number(g,x,y-1) == -1){ // On dessine le pont qui traverse le vide laissé par le noeud inexistant
+
+               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==1 )){
+
+                  printf(" |");
+
+                  printf("      ");
+
+               }
+
+               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 2 )){
+
+                  printf(" H");
+
+                  printf("      ");
+
+               }
+
+               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 3 )){
+
+                  printf(" *");
+
+                  printf("      ");
+
+               }
+
+               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 4 )){
+
+                  printf(" #");
+
+                  printf("      ");
+
+               }
+
+               else printf("      ");
+
+            }
+
+            else if (game_get_node_number(g,x,y) == -1){ // On print l'espace si on tombe sur le cas par default
+
+               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==1 ) )
+                  printf("   |");
+
+               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==2 ) )
+                  printf("   H");
+
+               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==3 ) )
+                  printf("   *");
+
+               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==4 ) )
+                  printf("   #");
+
+            }
 
          }
+
+
 
          printf("\n");
 
       }
+
+
+
 
 
                                                  // PARTIE INTERACTION//
@@ -453,13 +548,15 @@ int main(void){
    game g = new_game(7, nodes,4,4);
    game_print(7,g, nodes,4);
 
-   if( game_over(g)){
+   if(game_over(g)){
       printf("\n");
       printf("\n");
       printf("GAME OVER                            \n");
    }
-   else if(!game_over(g))
-      printf("CONGRATULATION YOU WIN\n");
+   else if(!game_over(g)){
+      printf("\n");
+      printf("YOU LOSE !\n");
+   }
 
    delete_game(g);
    return EXIT_SUCCESS;
