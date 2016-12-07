@@ -287,6 +287,30 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
                }
 
+               else if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) > 4 )  { // Si il y a 2 ponts à ce noeud vers l'EST
+                  int bridge = get_degree_dir(g,game_get_node_number(g,x,y),EAST);
+
+                  for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
+
+                     printf("%d",bridge); // On affiche un le pont
+
+                  int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
+
+                  if (ind < max &&  game_get_node_number(g,ind,y) == -1 ){
+
+                     while (game_get_node_number(g,ind,y)==-1)
+
+
+                        ind++;
+
+                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
+
+                        printf("%d",bridge);
+
+                  }
+
+               }
+
 
                if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==0)
                   printf("     "); //suivi d'espace pour l'esthétique
@@ -313,6 +337,13 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
                   if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 4)
 
                      printf(" #");
+
+                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) > 4){
+
+                     int bridge = get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH);
+                     printf(" %d",bridge);
+
+                  }
 
                   else printspace(g,x,y,nb_nodes,nodes);// On print l'espace si on tombe sur le cas par default
 
@@ -359,6 +390,14 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
                }
 
+                else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) > 4){
+
+                   int bridge = get_degree_dir(g,game_get_node_number(g,x,y),SOUTH);
+                   printf(" %d",bridge);
+                  printf("      ");
+
+               }
+
                else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==0){
 
                   printf("        ");
@@ -401,6 +440,16 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
                }
 
+                if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) > 4 )){
+
+                   int bridge = get_degree_dir(g,game_get_node_number(g,x,y),SOUTH);
+
+                   printf(" %d",bridge);
+
+                   printf("      ");
+
+               }
+
                else printf("      ");
 
             }
@@ -419,6 +468,9 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
                if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==4 ) )
                   printf("   #");
 
+               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) > 4 ) )
+                  printf("   %d",get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH));
+
             }
 
          }
@@ -435,8 +487,8 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
                                                  // PARTIE INTERACTION//
 
-      printf("%s\n",msg); // Print le message d'erreur
-      sprintf(msg," "); // Vide le tableau de message d'erreur
+      printf(" %s\n",msg); // Print le message d'erreur
+      sprintf(msg," \n"); // Vide le tableau de message d'erreur
 
       printf(" Choisissez une action 1:ajouter 2:supprimer 0:quitter\n ");
 
@@ -446,9 +498,11 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
          break;
 
       if (choix == 1){
+         printf("\n");
          printf(" veuillez entrer la coordonnée \"x\" de l'île:\n ");
          scanf("%d",&coordx);
 
+         printf("\n");
          printf(" veuillez entrer la coordonnée \"y\" de l'île:\n ");
          scanf("%d",&coordy);
 
@@ -458,7 +512,8 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
             goto debut;
          }
 
-         printf(" veuillez choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
+         printf("\n");
+         printf(" veuillez choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD 5:NW 6:SW 7:SE 8:NE \n ");
          scanf("%d",&choix2);
 
 
@@ -470,17 +525,17 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
          }
          else if (!(can_add_bridge_dir(g,node_num,intostr(choix2)))) {
-            //printf("\n");
+
             sprintf(msg,"Vous ne pouvez pas ajouter de pont vers cette direction.\n");
-            //printf("\n");
+
          }
 
          else if ( get_degree_dir(g,node_num,intostr(choix2)) >= game_nb_max_bridges ){
 
 
-            //printf("\n");
+
             sprintf(msg,"Vous ne pouvez pas ajouter de pont vers cette direction car le nombre de ponts autorisé a été atteint .\n");
-            //printf("\n");
+
          }
 
       }
@@ -490,7 +545,11 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
       // SUPPRIMER BRIDGES !
       if (choix == 2){
         sup: // étiquette pour revenir à l'option supprimer sans préciser à nouveau que l'on veut supprimer un pont
+
+         printf("\n");
+
          printf("Quelles sont les coordonnées 1:précédent 2:autres\n");
+
          scanf("%d",&choix);
 
          if (choix==1 && get_degree_dir(g,node_num,intostr(choix2))>0){
@@ -498,37 +557,48 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
          }
 
          else if (choix == 1 && get_degree(g,node_num)==0){
-            //printf("\n");
+
             sprintf(msg,"Il n'y a rien à supprimer");
-            //printf("\n");
+
          }
 
          if (choix== 2 && get_degree(g,node_num)>0){
+            printf("\n");
+
             printf(" veuiller entrer la coordonnée \"x\" de l'île:\n ");
+
             scanf("%d",&coordx);
+
+            printf("\n");
 
             printf(" veuiller entrer la coordonnée \"y\" de l'île:\n ");
             scanf("%d",&coordy);
 
-            printf(" veuiller choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD \n ");
+            printf("\n");
+
+            printf(" veuiller choisir une direction 1:OUEST 2:EST 3:NORD 4:SUD 5:NW 6:SW 7:SE 8:NE \n ");
             scanf("%d",&choix2);
 
             node_num = game_get_node_number(g,coordx,coordy);
 
-            if (game_get_node_number(g,coordx,coordy)==-1 || get_degree_dir(g,node_num,intostr(choix2))<=0){
-               //printf("\n");
+            if (game_get_node_number(g,coordx,coordy)==-1 || get_degree_dir(g,node_num,intostr(choix2)) <= 0){
+
                sprintf(msg,"impossible de supprimer de pont à cet endroit !\n");
+
                goto debut;
             }
 
             else if(game_get_node_number(g,coordx,coordy)!=-1 && get_degree_dir(g,node_num,intostr(choix2))!=0){
                del_bridge_dir(g,node_num,intostr(choix2));
+
             }
+
          }
+
          else if (choix == 2 && get_degree(g,node_num)==0){
-            //printf("\n");
+
             sprintf(msg,"Il n'y a rien à supprimer");
-            //printf("\n");
+
          }
          else goto sup;
       }
@@ -550,8 +620,8 @@ int main(void){
    for (int i=0;i<7;i++)
       nodes[i]= new_node(tnodes[i][0],tnodes[i][1],tnodes[i][2]); //On rempli le tableau de node !
 
-   game g = new_game(7, nodes,4,4);
-   game_print(7,g, nodes,4);
+   game g = new_game(7, nodes,6,4);
+   game_print(7,g, nodes,(game_nb_max_bridges(g)));
 
    if(game_over(g)){
       printf("\n");
