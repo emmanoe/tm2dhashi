@@ -203,6 +203,30 @@ int get_neighbour_dir (cgame g, int node_num, dir d){
             return i;
       }
    }
+   if (d == NW){
+      for (int i = node_num; i<game_nb_nodes(g);i++){
+	 if ((game_node(g,node_num) != game_node(g,i)) && (((get_x(game_node(g,node_num)))-(get_x(game_node(g,i)))) == ((get_y(game_node(g,i)))-(get_y(game_node(g,node_num))))))
+	    return i;
+      }
+   }
+   if (d == NE){
+      for (int i = node_num; i<game_nb_nodes(g);i++){
+	 if ((game_node(g,node_num) != game_node(g,i)) && (((get_x(game_node(g,i)))-(get_x(game_node(g,node_num)))) == ((get_y(game_node(g,i)))-(get_y(game_node(g,node_num))))))
+	    return i;
+      }
+   }
+   if (d == SW){
+      for (int i = node_num; i>=0;i--){
+	 if ((game_node(g,node_num) != game_node(g,i)) && (((get_x(game_node(g,node_num)))-(get_x(game_node(g,i)))) == ((get_y(game_node(g,node_num)))-(get_y(game_node(g,i))))))
+	    return i;
+      }
+   }
+   if (d == SE){
+      for (int i = node_num; i>=0;i--){
+	 if ((game_node(g,node_num) != game_node(g,i)) && (((get_x(game_node(g,i)))-(get_x(game_node(g,node_num)))) == ((get_y(game_node(g,node_num)))-(get_y(game_node(g,i))))))
+	    return i;
+      }
+   }
    return -1;
 }
 
@@ -234,7 +258,7 @@ void add_bridge_dir (game g, int node_num, dir d){
 
       switch (entier) // éviter répétition if sur la même variable "entier"
       {
-         case 0:
+         case 0:  //NORTH
             g->bridges_already_build[neighbour_dir][2]++;
             break;
          case 1:  // WEST
@@ -245,6 +269,18 @@ void add_bridge_dir (game g, int node_num, dir d){
                break;
          case 3: //EAST
             g->bridges_already_build[neighbour_dir][1]++;
+            break;
+         case 4: //NW
+            g->bridges_already_build[neighbour_dir][6]++;
+            break;
+         case 5: //SW
+            g->bridges_already_build[neighbour_dir][7]++;
+            break;
+         case 6: //SE
+            g->bridges_already_build[neighbour_dir][4]++;
+            break;
+         case 7: //NE
+            g->bridges_already_build[neighbour_dir][5]++;
             break;
       }
    }
