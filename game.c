@@ -4,11 +4,14 @@
 #include "game.h"
 #include "node.h"
 
+#define NB_DIR_POL 4 // 4 points cardinaux
 
 struct game_s{
    node* set_of_nodes; // Pointeur de type noeud vers le tableau de noeuds
    int nb_nodes;
    int** bridges_already_build; // Pointeur vers tableau contenant "nb_nodes" tableaux d'entier
+   int nb_dir;
+   int nb_max_bridges;
 };
 
 typedef struct game_s* game;
@@ -16,13 +19,14 @@ typedef const struct game_s* cgame;
 
 
 game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
+
    game g = (game) malloc(sizeof(struct game_s)); // Allocation dynamique du new_game
    if (g == NULL){
       printf("Not enought memory !\n");
       exit(EXIT_FAILURE);
    }
 
-   g->set_of_nodes = malloc(sizeof(node)*nb_nodes);
+   g->set_of_nodes = malloc(sizeof(node)*nb_nodes); // Demande d'allocation mémoire pour set_of_nodes
    for (int i=0;i<nb_nodes;i++)
       g -> set_of_nodes[i] = nodes[i]; //Récupération du tableau de nodes
    g -> nb_nodes = nb_nodes;
@@ -41,13 +45,19 @@ game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
          exit(EXIT_FAILURE);
       }
    }
+
    for (int i = 0; i< nb_nodes;i++){
-      for (int j=0; j<nb_dir;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
+      for (int j=0; j < nb_dir ;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
          t[i][j] = 0; // Initialisé à 0
       }
    }
 
    g->bridges_already_build = t;
+
+   g->nb_dir = nb_dir;
+
+   g->nb_max_bridges = nb_max_bridges_;
+
    return g;
 }
 
@@ -79,7 +89,7 @@ game copy_game (cgame g_src){
       }
 
       for (int i=0;i< game_nb_nodes(g_src) ;i++){
-         t[i] = malloc (sizeof(int)*4); //Puis on alloue chacun des sous-tableaux, t[i][j] pour stoques les informations sur le degrés de nodes[i]
+         t[i] = malloc (sizeof(int)*NB_DIR_POL); //Puis on alloue chacun des sous-tableaux, t[i][j] pour stoques les informations sur le degrés de nodes[i]
          if (t[i]==NULL){
             printf("Not enought memory!\n");
             exit(EXIT_FAILURE);
@@ -87,7 +97,7 @@ game copy_game (cgame g_src){
       }
 
       for (int i = 0; i< game_nb_nodes(g_src);i++){ // on copie les informations de tous les nodes du game
-         for (int j=0; j<4;j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
+         for (int j=0; j<NB_DIR_POL;j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
             dir d = j;
             t[i][j] = get_degree_dir(g_src,i,d);
          }
@@ -113,6 +123,19 @@ int game_nb_nodes (cgame g){
    return EXIT_FAILURE;
 }
 
+int game_nb_dir (cgame g){
+      if (g!=NULL)
+      return g -> nb_dir;
+   return EXIT_FAILURE;
+}
+
+int game_nb_max_bridges (cgame g){
+    if (g!=NULL)
+      return g -> nb_max_bridges;
+   return EXIT_FAILURE;
+}
+
+
 node game_node(cgame g, int node_num){
    assert(node_num<g->nb_nodes); // On vérifie que node_num est entre 0 et nb_nodes-1
    return g->set_of_nodes[node_num];
@@ -120,25 +143,65 @@ node game_node(cgame g, int node_num){
 
 bool game_over (cgame g){
    if (g!=NULL){
-      int somme_bridge =0 ;
+
+      int somme_bridge_already_build =0 ;
+      int somme_bridge_required = 0;
+
       for (int i=0; i<game_nb_nodes(g);i++){
-         for (int j=0;j<4; j++){
-            somme_bridge = somme_bridge + g->bridges_already_build[i][j];
+
+         for (int j=0;j<NB_DIR_POL; j++){ // !! Attention !! Vérifie uniquement pour les 4 premièrs points cardinaux
+
+            somme_bridge_already_build = somme_bridge_already_build + get_degree_dir(g, i, j);
+
          }
-         if (somme_bridge != get_required_degree(game_node(g,i))){// Si la somme des ponts de l'ile n°i négale pas le numéro qu'elle affiche alors c'est perdu
-            return 1;
-         }
+
+         /// PB game_node(g,1) ERREUR DE SEGMENTATION
+         somme_bridge_required = somme_bridge_required + get_required_degree(game_node(g,0));
+
       }
-   } //////// !!!!!!! AJOUTER LA CONNEXITE !!!!!!!
+
+
+      if (somme_bridge_already_build == somme_bridge_required )// Si la somme des ponts de l'ile n°i négale pas le numéro qu'elle affiche alors c'est perdu
+         return true;
+
+      return false;
+
+   }
+
+    //////// !!!!!!! AJOUTER LA CONNEXITE !!!!!!!
+
    return EXIT_FAILURE;
 }
 
 
 
 void del_bridge_dir (game g, int node_num, dir d){
+
    int entier = d;
-   if (g->bridges_already_build[node_num][d]>0)
+
+   int neighbour = get_neighbour_dir(g, node_num, d);
+
+   if (g->bridges_already_build[node_num][d] >0){
       g->bridges_already_build[node_num][entier]--;
+
+      switch (entier)
+      {
+         case 0:
+            g->bridges_already_build[neighbour][2]--;
+            break;
+         case 1:
+            g->bridges_already_build[neighbour][3]--;
+            break;
+         case 2:
+            g->bridges_already_build[neighbour][0]--;
+            break;
+         case 3:
+            g->bridges_already_build[neighbour][1]--;
+            break;
+      }
+
+   }
+
 }
 
 int get_degree_dir (cgame g, int node_num, dir d){
@@ -149,7 +212,7 @@ int get_degree_dir (cgame g, int node_num, dir d){
 
 int get_degree (cgame g, int node_num) {
    int cmpt =0;
-   for (int i=0; i<4;i++){
+   for (int i=0; i<NB_DIR_POL;i++){
       cmpt = cmpt + get_degree_dir(g, node_num, i);
    }
    return cmpt;
@@ -195,10 +258,13 @@ int game_get_node_number (cgame g, int x, int y){
 }
 
 bool can_add_bridge_dir (cgame g, int node_num, dir d){
-   //int entier = d ;
 
-   if (/* g->bridges_already_build[node_num][entier]>=2 || */ get_neighbour_dir(g, node_num, d) == -1)
+   int entier = d;
+
+   if ( get_neighbour_dir(g, node_num, d) == -1 ||  entier > g -> nb_dir)
+
       return 0;
+
    return 1; ///////// AJOUTER LA VERIFICATION POUR LES CROISEMENTS !!!!!!!!!!!
 }
 
@@ -206,7 +272,9 @@ void add_bridge_dir (game g, int node_num, dir d){
    int entier =d ;
 
    if (can_add_bridge_dir(g, node_num, d)){
+
       int neighbour_dir = get_neighbour_dir(g,node_num,d);
+
       g->bridges_already_build[node_num][entier]++;
 
       switch (entier) // éviter répétition if sur la même variable "entier"

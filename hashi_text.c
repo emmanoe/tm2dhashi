@@ -64,24 +64,24 @@ dir intostr(int i){ //Fonction qui converti le choix format int en une direction
 
       case 1:
 
-      return WEST;
-      break;
+         return WEST;
+         break;
 
-   case 2:
+      case 2:
 
-      return EAST;
-      break;
+         return EAST;
+         break;
 
 
-   case 3:
+      case 3:
 
-      return NORTH;
-      break;
+         return NORTH;
+         break;
 
-   case 4:
+      case 4:
 
-      return SOUTH;
-      break;
+         return SOUTH;
+         break;
 
       default:
          return EXIT_FAILURE;
@@ -141,7 +141,7 @@ void printspace(game g,int x,int y, int nb_nodes, node nodes[]){ // Print de l'e
  * -g le jeu à afficher
  * -nodes[] le tableau de noeuds
  */
-void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* Affiche l'instance de jeu créée */
+void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int nb_dir){ /* Affiche l'instance de jeu créée */
 
    int choix =0; int choix2=0; int coordx=0; int coordy=0; int node_num=0; // variables nécéssaire lors intéraction avec la machine
 
@@ -161,11 +161,11 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
 
       printf("\n");
 
-      printf("Nombre maximum de ponts entre 2 îles : %d\n",game_nb_max_bridges);
+      printf("Nombre de ponts maximum entre 2 îles : %d\n",game_nb_max_bridges);
 
       printf("\n");
 
-      printf("Nombre de directions pris en comptes : 8 \n");
+      printf("Nombre de directions autorisées : 8 \n");
 
       printf("\n");
 
@@ -520,11 +520,11 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges){ /* 
          //AJOUTER BRIDGES
          node_num = game_get_node_number(g,coordx,coordy); // A revoir pour la position
 
-         if ( can_add_bridge_dir(g,node_num,intostr(choix2)) && get_degree_dir(g,node_num,intostr(choix2)) < game_nb_max_bridges ){ // On vérifie les condition nécéssaire
+         if ( can_add_bridge_dir(g,node_num,intostr(choix2)) && get_degree_dir(g,node_num,intostr(choix2)) < game_nb_max_bridges && choix2 < nb_dir ){ // On vérifie les condition nécéssaire
             add_bridge_dir(g,node_num,intostr(choix2));
 
          }
-         else if (!(can_add_bridge_dir(g,node_num,intostr(choix2)))) {
+         else if (!(can_add_bridge_dir(g,node_num,intostr(choix2))) || choix2 > nb_dir) {
 
             sprintf(msg,"Vous ne pouvez pas ajouter de pont vers cette direction.\n");
 
@@ -621,7 +621,7 @@ int main(void){
       nodes[i]= new_node(tnodes[i][0],tnodes[i][1],tnodes[i][2]); //On rempli le tableau de node !
 
    game g = new_game(7, nodes,6,4);
-   game_print(7,g, nodes,(game_nb_max_bridges(g)));
+   game_print(7,g, nodes,(game_nb_max_bridges(g)),8);
 
    if(game_over(g)){
       printf("\n");
