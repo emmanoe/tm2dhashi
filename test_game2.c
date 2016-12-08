@@ -96,6 +96,15 @@ bool test_game_nb_nodes(){
    return r;
 }
 
+bool test_game_nb_dir(){
+   game g = new_game(EXAMPLE_NB_NODE,nodes,4,4);
+   bool r = true;
+   r = test_equality_int(4 ,game_nb_dir(g),"pb nb_dir");
+   delete_game(g);
+   *p = bilan(r);
+   return r;
+}
+
 bool test_game_node() {
    game g = new_game(EXAMPLE_NB_NODE,nodes,4,4);
    node n;
@@ -282,7 +291,7 @@ bool test_get_degree(){
 
   }
 
-///////// test_game_1////////
+
 bool test_get_node_number() {
    game g = new_game(EXAMPLE_NB_NODE,nodes,2,4);
    bool r = true;
@@ -337,23 +346,24 @@ int main (int argc, char *argv[])
    bool result= true;
    result = test_new_game() && result; // EFFECTUE TOUT LES TESTS !
    result = test_game_nb_nodes() && result;
+   result = test_game_nb_dir() && result;
    result = test_game_node() && result;
    result = test_game_over() && result;
    result = test_delete_game() && result;
    result = test_copy_game() && result;
-   result = result && test_get_neighbour_dir();
-   result = result && test_add_bridge();
-   result = result && test_get_node_number();
-   result = result && test_del_bridge();
-   result = result && test_get_degree_dir();
-   result = result && test_get_degree();
-   result = result && test_can_add_bridge_dir();
+   result = test_get_neighbour_dir() && result;
+   result = test_add_bridge() && result;
+   result = test_get_node_number() && result;
+   result = test_del_bridge() && result;
+   result = test_get_degree_dir() && result;
+   result = test_get_degree() && result;
+   result = test_can_add_bridge_dir() && result;
    if (result){
-      printf ("Les tests se sont déroulés normalement, bilan %d/13\n",cmpt);
+      printf ("Les tests se sont déroulés normalement, bilan %d/14\n",cmpt);
       return EXIT_SUCCESS;
    }
    else{
-      printf ("Il y a quelques erreurs dans vos tests, bilan %d/13\n",cmpt);
+      printf ("Il y a quelques erreurs dans vos tests, bilan %d/14\n",cmpt);
       return EXIT_FAILURE;
    }
 }//////// AJOUTER BILAN TOTAL DES TEST!!
