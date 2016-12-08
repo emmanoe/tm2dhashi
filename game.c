@@ -8,41 +8,50 @@
 struct game_s{
    node* set_of_nodes; // Pointeur de type noeud vers le tableau de noeuds
    int nb_nodes;
+   int nb_dir;
+   int nb_max_bridges;
    int** bridges_already_build; // Pointeur vers tableau contenant "nb_nodes" tableaux d'entier
 };
 
-typedef struct game_s* game;
-typedef const struct game_s* cgame;
+//typedef struct game_s* game;
+//typedef const struct game_s* cgame;
 
 
-game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
+game new_game(int nb_nodes, node *nodes, int nb_max_bridges, int nb_dir){
    game g = (game) malloc(sizeof(struct game_s)); // Allocation dynamique du new_game
    if (g == NULL){
-      printf("Not enought memory !\n");
+      fprintf(stderr, "Not enough memory!\n");
       exit(EXIT_FAILURE);
    }
 
-   g->set_of_nodes = malloc(sizeof(node)*nb_nodes);
+   g -> set_of_nodes = (node*) malloc(sizeof(node)*nb_nodes);
    for (int i=0;i<nb_nodes;i++)
       g -> set_of_nodes[i] = nodes[i]; //Récupération du tableau de nodes
+   
    g -> nb_nodes = nb_nodes;
+   if ((nb_dir!=4)&&(nb_dir!=8)){
+      fprintf(stderr,"Invalid amount of directions!\n");
+      exit(EXIT_FAILURE);
+   }
+   g -> nb_dir = nb_dir;
+   g -> nb_max_bridges = nb_max_bridges;
 
 
-   int** t = malloc(sizeof(int*)*nb_nodes); // On créé le tableau principal qui va contenir l'autre tableau
+   int** t = malloc(sizeof(int*)*nb_nodes); // On crée le tableau principal qui va contenir l'autre tableau
    if (t==NULL){
-      printf("Not enought memory!\n");
+      printf("Not enough memory!\n");
       exit(EXIT_FAILURE);
    }
 
    for (int i=0;i < nb_nodes ;i++){
-      t[i] = malloc (sizeof(int)*nb_dir); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
+     t[i] = (int*) malloc (sizeof(int)*nb_dir); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degré de nodes[i]
       if (t[i]==NULL){
-         printf("Not enought memory!\n");
+         printf("Not enough memory!\n");
          exit(EXIT_FAILURE);
       }
    }
-   for (int i = 0; i< nb_nodes;i++){
-      for (int j=0; j<nb_dir;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
+   for (int i = 0; i < nb_nodes; i++){
+      for (int j = 0; j < nb_dir; j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= nb_max_bridges
          t[i][j] = 0; // Initialisé à 0
       }
    }
@@ -71,23 +80,25 @@ game copy_game (cgame g_src){
    game g=(game) malloc(sizeof(struct game_s));
    if (g != NULL){ // On recopie tous les champs de la structure game !
       g -> nb_nodes = game_nb_nodes(g_src);
+      g -> nb_dir = game_nb_dir(g_src);
+      g -> nb_max_bridges = game_nb_max_bridges(g_src);
 
-      int** t = malloc(sizeof(int*)*game_nb_nodes(g)); // On créé le tableau principal qui va contenir l'autre tableau
+      int** t = malloc(sizeof(int*)*game_nb_nodes(g_src)); // On crée le tableau principal qui va contenir l'autre tableau
       if (t==NULL){
-         printf("Not enought memory!\n");
+         printf("Not enough memory!\n");
          exit(EXIT_FAILURE);
       }
 
       for (int i=0;i< game_nb_nodes(g_src) ;i++){
-         t[i] = malloc (sizeof(int)*4); //Puis on alloue chacun des sous-tableaux, t[i][j] pour stoques les informations sur le degrés de nodes[i]
+	t[i] = (int*) malloc (sizeof(int)*game_nb_dir(g_src)); //Puis on alloue chacun des sous-tableaux, t[i][j] pour stocker les informations sur le degré de nodes[i]
          if (t[i]==NULL){
-            printf("Not enought memory!\n");
+            printf("Not enough memory!\n");
             exit(EXIT_FAILURE);
          }
       }
 
       for (int i = 0; i< game_nb_nodes(g_src);i++){ // on copie les informations de tous les nodes du game
-         for (int j=0; j<4;j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
+	for (int j=0; j< game_nb_dir(g_src);j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= nb_max_bridges
             dir d = j;
             t[i][j] = get_degree_dir(g_src,i,d);
          }
@@ -102,7 +113,7 @@ game copy_game (cgame g_src){
 
       return g;
    }
-   printf("Not enought memory !\n"); // Si le le jeu n'existe pas on annule
+   printf("Not enough memory !\n"); // Si le le jeu n'existe pas on annule
    exit(EXIT_FAILURE);
 }
 
@@ -110,6 +121,18 @@ game copy_game (cgame g_src){
 int game_nb_nodes (cgame g){
    if (g!=NULL)
       return g -> nb_nodes;
+   return EXIT_FAILURE;
+}
+
+int game_nb_dir (cgame g){
+   if (g!=NULL)
+      return g -> nb_dir;
+   return EXIT_FAILURE;
+}
+
+int game_nb_max_bridges (cgame g){
+   if (g!=NULL)
+      return g -> nb_max_bridges;
    return EXIT_FAILURE;
 }
 
@@ -122,7 +145,7 @@ bool game_over (cgame g){
    if (g!=NULL){
       int somme_bridge =0 ;
       for (int i=0; i<game_nb_nodes(g);i++){
-         for (int j=0;j<4; j++){
+	for (int j=0;j<game_nb_dir(g); j++){
             somme_bridge = somme_bridge + g->bridges_already_build[i][j];
          }
          if (somme_bridge != get_required_degree(game_node(g,i))){// Si la somme des ponts de l'ile n°i négale pas le numéro qu'elle affiche alors c'est perdu
@@ -149,7 +172,7 @@ int get_degree_dir (cgame g, int node_num, dir d){
 
 int get_degree (cgame g, int node_num) {
    int cmpt =0;
-   for (int i=0; i<4;i++){
+   for (int i=0; i<game_nb_dir(g);i++){
       cmpt = cmpt + get_degree_dir(g, node_num, i);
    }
    return cmpt;
