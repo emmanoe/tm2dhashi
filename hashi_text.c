@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "game.h"
-#include "node.h"
+#include "node.h"  
+ 
 
-
-
+ 
                                                 //FONCTION DIVERSE//
 
 /*
@@ -486,6 +486,23 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
 
                                                  // PARTIE INTERACTION//
+
+      
+
+
+
+      int no=game_get_node_number(g, 1, 1);
+      printf("%d",no);
+      int testNE=get_neighbour_dir(g, no, NE);
+      printf("%d",testNE);
+      int testNW=get_neighbour_dir(g, no, NW);
+      printf("%d",testNW);
+      int testSE=get_neighbour_dir(g, no, SE);
+      printf("%d",testSE);
+      int testSW=get_neighbour_dir(g, no, SW);
+      printf("%d\n",testSW);
+
+
 
       printf(" %s\n",msg); // Print le message d'erreur
       sprintf(msg," \n"); // Vide le tableau de message d'erreur
