@@ -4,7 +4,7 @@
 #include "game.h"
 #include "node.h"
 
-#define NB_DIR_POL 4 // 4 points cardinaux
+#define NB_DIR_POL 4 // 4 points cardinaux  
 
 struct game_s{
    node* set_of_nodes; // Pointeur de type noeud vers le tableau de noeuds
@@ -218,31 +218,101 @@ int get_degree (cgame g, int node_num) {
    return cmpt;
 }
 
+
 int get_neighbour_dir (cgame g, int node_num, dir d){
+   
+   int x_node=get_x(game_node(g,node_num)); //on récupère les coords du noeud traité
+   int y_node=get_y(game_node(g,node_num));
+   
+
    if (d == EAST){
-      for (int i=node_num; i<g->nb_nodes;i++){
-         if ((game_node(g,node_num) != game_node(g,i)) && (get_y(game_node(g,i)) == get_y(game_node(g,node_num))))
-            return i;
+      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds HORIZONTALEMENT dans l'instance de jeu
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node + u) && (get_y(game_node(g,i)) == y_node))
+                                                                                                                                           
+               return i;
+         }
       }
    }
+
    if (d == WEST){
-      for (int i=node_num; i>=0;i--){
-         if ((game_node(g,node_num) != game_node(g,i)) && (get_y(game_node(g,i)) == get_y(game_node(g,node_num))))
-            return i;
+      for (int u=1; u<=3; u++){ 
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node - u) && (get_y(game_node(g,i)) == y_node))
+                                                                                                                                           
+               return i;
+         }
       }
    }
+
    if (d == NORTH){
-      for (int i=node_num; i<g->nb_nodes;i++){
-         if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == get_x(game_node(g,node_num))))
-            return i;
+      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds VERTICALEMENT dans l'instance de jeu
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node) && (get_y(game_node(g,i)) == y_node + 1))
+                                                                                                                                           
+               return i;
+         }
       }
    }
+
    if (d == SOUTH){
-      for (int i=node_num; i>=0;i--){
-         if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == get_x(game_node(g,node_num))))
-            return i;
+      for (int u=1; u<=3; u++){ 
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node) && (get_y(game_node(g,i)) == y_node - 1))
+                                                                                                                                           
+               return i;
+         }
       }
    }
+
+   
+   if (d == NE){
+      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node + u) && (get_y(game_node(g,i)) == y_node + u))/*si on trouve un noeud différent
+                                                                                                                                             * du noeud traité et que ce noeud
+                                                                                                                                             * est le prochian qui
+                                                                                                                                             * se situe sur la même diagonale
+                                                                                                                                             * dans la dir choisie */
+                  return i;
+         
+         
+         
+         }
+      }
+      
+   }
+
+   if (d == SW){
+      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node - u) && (get_y(game_node(g,i)) == y_node - u))
+                                                                                                                                           
+               return i;
+         }
+      }
+   }
+   
+   if (d == NW){
+      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node - u) && (get_y(game_node(g,i)) == y_node + u))
+                                                                                                                                           
+               return i;
+         }
+      }
+   }
+
+   if (d == SE){
+      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
+         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
+            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node + u) && (get_y(game_node(g,i)) == y_node - u))
+                                                                                                                                           
+               return i;
+         }
+      }
+   }
+   
    return -1;
 }
 
