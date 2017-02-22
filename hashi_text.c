@@ -355,24 +355,41 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
 
 
-         printf("\n");
+	 // printf("\n");
+	 // printf("\n");
+	 // printf("\n");
+	 // printf("\n");
+	 printf("\n");
 
                //PARTIE PONT VERTICAL | ou H
 
-         for (int x =0;x<=max;x++){
+	 int compteur=0;
+
+	 while (compteur != 5){
+
+           for (int x =0;x<=max;x++){
+
 
             if (game_get_node_number(g,x,y) != -1 && game_get_node_number(g,x,y-1) != -1){ // Si le noeud et son voisin du bas existe
+	     
+
 
                if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 1 || get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 1){
-
-                  printf(" |");
-                  printf("      ");
+		 // for (int i=0; i<=3; i++){
+		   printf(" |");
+		   printf("      ");
+		   // for (int i=0; i<x; i++){
+		   // printf("        ");
+		   // }
+		   //}
+		 
+		   //printf(" Q");
+		   //printf("      ");
 
                }
                else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 2){
-
-                  printf(" H");
-                  printf("      ");
+		 printf(" H");
+                 printf("      ");
 
                }
 
@@ -473,11 +490,16 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
             }
 
-         }
+           }
+	   
+	   
 
 
 
          printf("\n");
+	 compteur++;
+	 }
+	 
 
       }
 
@@ -491,7 +513,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
 
 
-      int no=game_get_node_number(g, 1, 1);
+      /* int no=game_get_node_number(g, 1, 1);
       printf("%d",no);
       int testNE=get_neighbour_dir(g, no, NE);
       printf("%d",testNE);
@@ -501,6 +523,25 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
       printf("%d",testSE);
       int testSW=get_neighbour_dir(g, no, SW);
       printf("%d\n",testSW);
+     
+
+      int nb_max = 2;
+  
+      for (int y=nb_max; y>=0; y--){
+        for (int x=0; x<=nb_max; x++){
+          int nodenum=game_get_node_number(g,x,y);
+	  if (nodenum != -1){
+	    int node_deg=get_required_degree(nodes[nodenum]);
+	    printf("%d   ",node_deg);
+          }
+          else{
+	    printf("    ");
+	    }
+        }
+        printf("\n");
+	printf("\n");
+	printf("\n");
+	}*/
 
 
 
