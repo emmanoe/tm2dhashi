@@ -1,362 +1,572 @@
-#include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "game.h"
+#include <stdio.h>
+#include <stdbool.h>
 #include "node.h"
+#include "game.h"
 
-#define NB_DIR_POL 4 // 4 points cardinaux  
 
 struct game_s{
-   node* set_of_nodes; // Pointeur de type noeud vers le tableau de noeuds
-   int nb_nodes;
-   int** bridges_already_build; // Pointeur vers tableau contenant "nb_nodes" tableaux d'entier
-   int nb_dir;
-   int nb_max_bridges;
+  int nb_nodes;
+  node * nodes;
+  int** bridges;
+  int nb_max_bridges;
+  int nb_dir;
 };
 
-typedef struct game_s* game;
-typedef const struct game_s* cgame;
+enum orientation {HOR = -1, VERT = -2, DIAG_R = -3, DIAG_L = -4};
 
 
-game new_game(int nb_nodes, node *nodes, int nb_max_bridges_, int nb_dir){
+void max_grid(cgame g, int * max_x, int * max_y){
+  node n;
+  for(int i = 0; i < g->nb_nodes; i++){
+     n = g->nodes[i];
+    if(get_x(n) > *max_x){*max_x = get_x(n);}
+    if(get_y(n) > *max_y){*max_y = get_y(n);}
+  }
+}
 
-   game g = (game) malloc(sizeof(struct game_s)); // Allocation dynamique du new_game
-   if (g == NULL){
-      printf("Not enought memory !\n");
+game new_game (int nb_nodes, node * nodes, int nb_max_bridges, int nb_dir){
+  game g = malloc(sizeof(struct game_s));
+  if(g == NULL){
+    fprintf(stderr, "Not enough memory");
+    exit(EXIT_FAILURE);
+  }
+  g -> bridges = (int**) malloc(nb_nodes * sizeof(int*));
+  if(g -> bridges == NULL){
+    fprintf(stderr, "Not enough memory");
+    exit(EXIT_FAILURE);
+  }
+  for(int i=0; i<nb_nodes; i++){
+    g->bridges[i] = (int*)malloc(nb_dir*sizeof(int));
+    if(g -> bridges[i] == NULL){
+      fprintf(stderr, "Not enough memory");
       exit(EXIT_FAILURE);
-   }
+    }
+  }
+  node * g_nodes = malloc(nb_nodes * sizeof(node));
+  if(g_nodes == NULL){
+    fprintf(stderr, "Not enough memory");
+    exit(EXIT_FAILURE);
+  }
+  for(int i = 0; i < nb_nodes; i++){
+    g_nodes[i] = new_node(get_x(nodes[i]),get_y(nodes[i]), get_required_degree(nodes[i]));
+  }
+  for(int i = 0; i < nb_nodes; i++){
+    for(int j =0; j < nb_dir; j++){
+      g->bridges[i][j] = 0;
+    }
+  }
 
-   g->set_of_nodes = malloc(sizeof(node)*nb_nodes); // Demande d'allocation mémoire pour set_of_nodes
-   for (int i=0;i<nb_nodes;i++)
-      g -> set_of_nodes[i] = nodes[i]; //Récupération du tableau de nodes
-   g -> nb_nodes = nb_nodes;
-
-
-   int** t = malloc(sizeof(int*)*nb_nodes); // On créé le tableau principal qui va contenir l'autre tableau
-   if (t==NULL){
-      printf("Not enought memory!\n");
-      exit(EXIT_FAILURE);
-   }
-
-   for (int i=0;i < nb_nodes ;i++){
-      t[i] = malloc (sizeof(int)*nb_dir); //Puis on alloue chacun des sous-tableaux, t[i][j] stocke les informations sur le degrès de nodes[i]
-      if (t[i]==NULL){
-         printf("Not enought memory!\n");
-         exit(EXIT_FAILURE);
-      }
-   }
-
-   for (int i = 0; i< nb_nodes;i++){
-      for (int j=0; j < nb_dir ;j++){ //j correspond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
-         t[i][j] = 0; // Initialisé à 0
-      }
-   }
-
-   g->bridges_already_build = t;
-
-   g->nb_dir = nb_dir;
-
-   g->nb_max_bridges = nb_max_bridges_;
-
-   return g;
+  g -> nb_nodes = nb_nodes;
+  g -> nodes = g_nodes;
+  g -> nb_max_bridges = nb_max_bridges;
+  g -> nb_dir = nb_dir;
+  return g;
 }
 
 void delete_game (game g){
-   if (g!=NULL){
-
-      if (g->bridges_already_build != NULL) {
-         for (int i = 0;i<game_nb_nodes(g);i++){
-            free(g->bridges_already_build[i]); // Il faut libérer les sous-tableaux avant de pouvoir libérer le tableau principal
-         }
-         free(g -> bridges_already_build);
-         free(g->set_of_nodes);
-      }
-
-   free(g);
-   }
-   return;
+  for(int i = 0; i < g->nb_nodes; i++){
+    free(g->bridges[i]);}
+  free(g->bridges);
+  for(int i = 0; i < g->nb_nodes; i++){
+    delete_node(g->nodes[i]);
+  }
+  free(g->nodes);
+  free(g);
 }
 
 game copy_game (cgame g_src){
-   game g=(game) malloc(sizeof(struct game_s));
-   if (g != NULL){ // On recopie tous les champs de la structure game !
-      g -> nb_nodes = game_nb_nodes(g_src);
-
-      int** t = malloc(sizeof(int*)*game_nb_nodes(g)); // On créé le tableau principal qui va contenir l'autre tableau
-      if (t==NULL){
-         printf("Not enought memory!\n");
-         exit(EXIT_FAILURE);
+   game g = new_game(g_src -> nb_nodes, g_src -> nodes, g_src -> nb_max_bridges, g_src -> nb_dir);
+   for(int i = 0; i < g_src -> nb_nodes; i++){
+      for(int j = 0; j < g_src -> nb_dir; j++){
+         g->bridges[i][j] = g_src -> bridges[i][j];
       }
-
-      for (int i=0;i< game_nb_nodes(g_src) ;i++){
-         t[i] = malloc (sizeof(int)*NB_DIR_POL); //Puis on alloue chacun des sous-tableaux, t[i][j] pour stoques les informations sur le degrés de nodes[i]
-         if (t[i]==NULL){
-            printf("Not enought memory!\n");
-            exit(EXIT_FAILURE);
-         }
-      }
-
-      for (int i = 0; i< game_nb_nodes(g_src);i++){ // on copie les informations de tous les nodes du game
-         for (int j=0; j<NB_DIR_POL;j++){ //j corespond à une direction (ex: 1 représente le NORD) et 0 <= t[i][j] <= 2
-            dir d = j;
-            t[i][j] = get_degree_dir(g_src,i,d);
-         }
-      }
-
-      g -> bridges_already_build=t;
-
-      g->set_of_nodes = malloc(sizeof(node) * game_nb_nodes(g_src));
-      for (int i=0; i< game_nb_nodes(g); i++){
-         g -> set_of_nodes[i] = new_node(get_x(game_node(g_src,i)),get_y(game_node(g_src,i)),get_required_degree(game_node(g_src,i)));
-      }
-
-      return g;
    }
-   printf("Not enought memory !\n"); // Si le le jeu n'existe pas on annule
-   exit(EXIT_FAILURE);
+  return g;
 }
 
+int game_get_node_number (cgame g, int x, int y){
+   node *nodes = g->nodes;
+   for (int i=0; i<(g->nb_nodes) ; i++){
+      int xt = get_x(nodes[i]);
+      int yt = get_y(nodes[i]);
+      if (xt == x && yt == y)
+         return i;
+   }
+   return -1;
+}
+
+int get_neighbour_dir (cgame g, int node_num, dir d){
+   node *T = g->nodes;
+   int x = get_x(T[node_num]);
+   int y = get_y(T[node_num]);
+   int max_x = 0;
+   int max_y = 0;
+   max_grid(g, &max_x, &max_y);
+    switch(d){
+      case NORTH :
+        y++;
+        while(game_get_node_number(g,x,y)==-1 && y < max_y)
+          y++;
+        return game_get_node_number(g,x,y);
+        break;
+
+      case SOUTH:
+        y--;
+        while(game_get_node_number(g,x,y)==-1 && y>=0)
+          y--;
+        return game_get_node_number(g,x,y);
+        break;
+
+      case WEST:
+        x--;
+        while(game_get_node_number(g,x,y)==-1 && x>=0)
+          x--;
+        return game_get_node_number(g,x,y);
+        break;
+
+      case EAST:
+        x++;
+        while(game_get_node_number(g,x,y)==-1 && x < max_x)
+          x++;
+        return game_get_node_number(g,x,y);
+        break;
+
+      case NW :
+        y++;
+        x--;
+        while(game_get_node_number(g,x,y)==-1 && y < max_y){
+          y++;
+          x--;
+        }
+        return game_get_node_number(g,x,y);
+        break;
+
+      case SW:
+        y--;
+        x--;
+        while(game_get_node_number(g,x,y)==-1 && y>=0){
+          y--;
+          x--;
+        }
+        return game_get_node_number(g,x,y);
+        break;
+
+      case SE:
+        y--;
+        x++;
+        while(game_get_node_number(g,x,y)==-1 && y>=0){
+          y--;
+          x++;
+        }
+        return game_get_node_number(g,x,y);
+        break;
+
+      case NE:
+        y++;
+        x++;
+        while(game_get_node_number(g,x,y)==-1 && x < max_x){
+          y++;
+          x++;
+        }
+        return game_get_node_number(g,x,y);
+        break;
+    default:
+      break;
+   }
+    return -1;
+
+}
 
 int game_nb_nodes (cgame g){
-   if (g!=NULL)
-      return g -> nb_nodes;
-   return EXIT_FAILURE;
+   return g -> nb_nodes;
 }
 
 int game_nb_dir (cgame g){
-      if (g!=NULL)
-      return g -> nb_dir;
-   return EXIT_FAILURE;
+  return g->nb_dir;
 }
 
 int game_nb_max_bridges (cgame g){
-    if (g!=NULL)
-      return g -> nb_max_bridges;
-   return EXIT_FAILURE;
+  return g->nb_max_bridges;
 }
 
+node game_node (cgame g, int node_num){
+   node *T = g -> nodes;
+   return T[node_num];
+}
 
-node game_node(cgame g, int node_num){
-   assert(node_num<g->nb_nodes); // On vérifie que node_num est entre 0 et nb_nodes-1
-   return g->set_of_nodes[node_num];
+int get_degree (cgame g, int node_num){
+  int degree = 0;
+  for(int i = 0; i < g->nb_dir; i++){
+    degree = degree + g->bridges[node_num][i];
+  }
+  return degree;
+}
+
+void linked_aux(cgame g, int node_number, bool * connex_tab, int cmp){
+  if(cmp < g->nb_nodes){
+    cmp++;
+    connex_tab[node_number] = true;
+    if(g->nb_dir == 4){
+      for(int d = NORTH; d <= EAST; d++){
+        if(get_neighbour_dir(g, node_number, d) != -1 && get_degree_dir(g, node_number, d) > 0){
+          linked_aux(g, get_neighbour_dir(g, node_number, d), connex_tab, cmp);
+        }
+      }
+    }
+    else if(g->nb_dir == 8){
+      for(int d = NORTH; d <= NE; d++){
+        if(get_neighbour_dir(g, node_number, d) != -1 && get_degree_dir(g, node_number, d) > 0){
+          linked_aux(g, get_neighbour_dir(g, node_number, d), connex_tab, cmp);
+        }
+      }
+    }
+  }
+}
+
+bool linked(cgame g){
+  bool * connex_tab = malloc(g->nb_nodes * sizeof(bool));
+  if(connex_tab == NULL){
+    fprintf(stderr, "Not enough memory !");
+    exit(EXIT_FAILURE);}
+  for(int i = 0; i < g->nb_nodes; i++){
+    connex_tab[i] = false;
+  }
+  linked_aux(g, 0, connex_tab, 0);
+  for(int i = 0; i < g->nb_nodes; i++){
+    if(!connex_tab[i]){
+      free(connex_tab);
+      return false;
+    }
+  }
+  free(connex_tab);
+  return true;
 }
 
 bool game_over (cgame g){
-   if (g!=NULL){
-
-      int somme_bridge_already_build =0 ;
-      int somme_bridge_required = 0;
-
-      for (int i=0; i<game_nb_nodes(g);i++){
-
-         for (int j=0;j<NB_DIR_POL; j++){ // !! Attention !! Vérifie uniquement pour les 4 premièrs points cardinaux
-
-            somme_bridge_already_build = somme_bridge_already_build + get_degree_dir(g, i, j);
-
-         }
-
-         /// PB game_node(g,1) ERREUR DE SEGMENTATION
-         somme_bridge_required = somme_bridge_required + get_required_degree(game_node(g,0));
-
-      }
-
-
-      if (somme_bridge_already_build == somme_bridge_required )// Si la somme des ponts de l'ile n°i négale pas le numéro qu'elle affiche alors c'est perdu
-         return true;
-
-      return false;
-
+   for (int i = 0 ; i<(g->nb_nodes) ; i++){
+     int degree = get_degree(g, i);
+     if (degree != get_required_degree(game_node(g, i)))
+        return false;
    }
-
-    //////// !!!!!!! AJOUTER LA CONNEXITE !!!!!!!
-
-   return EXIT_FAILURE;
+   return linked(g);
 }
 
-
-
-void del_bridge_dir (game g, int node_num, dir d){
-
-   int entier = d;
-
-   int neighbour = get_neighbour_dir(g, node_num, d);
-
-   if (g->bridges_already_build[node_num][d] >0){
-      g->bridges_already_build[node_num][entier]--;
-
-      switch (entier)
-      {
-         case 0:
-            g->bridges_already_build[neighbour][2]--;
-            break;
-         case 1:
-            g->bridges_already_build[neighbour][3]--;
-            break;
-         case 2:
-            g->bridges_already_build[neighbour][0]--;
-            break;
-         case 3:
-            g->bridges_already_build[neighbour][1]--;
-            break;
-      }
-
+void vector_direction (int* x, int* y, dir d){
+   switch (d){
+      case NORTH :
+         *x = 0;
+         *y = 1;
+         break;
+      case SOUTH :
+         *x = 0;
+         *y = -1;
+         break;
+      case EAST :
+         *x = 1;
+         *y = 0;
+         break;
+      case WEST :
+         *x = -1;
+         *y = 0;
+         break;
+      case NW :
+         *x = -1;
+         *y = 1;
+         break;
+      case SW :
+         *x = -1;
+         *y = -1;
+         break;
+      case SE :
+         *x = 1;
+         *y = -1;
+         break;
+      case NE :
+         *x = 1;
+         *y = 1;
+         break;
    }
-
 }
 
-int get_degree_dir (cgame g, int node_num, dir d){
-   int entier = d;
-   return g->bridges_already_build[node_num][entier];
+enum orientation orientation(dir d){
+  if(d == NORTH || d == SOUTH){
+    return VERT;
+  }
+  else if(d == EAST || d == WEST){
+    return HOR;
+  }
+  else if(d == SW || d == NE){
+    return DIAG_R;
+  }
+  else{
+    return DIAG_L;
+  }
 }
 
-
-int get_degree (cgame g, int node_num) {
-   int cmpt =0;
-   for (int i=0; i<NB_DIR_POL;i++){
-      cmpt = cmpt + get_degree_dir(g, node_num, i);
+bool collisions(cgame g, int node_num, dir dest){
+  int max_x = 0, max_y = 0, x, y, req_degree, x_v, y_v;
+   node n;
+   max_grid(g, &max_x, &max_y);
+   max_x += 1;
+   max_y += 1;
+   int ** M = (int**)malloc(((2*max_x) - 1) * sizeof(int*));
+   if(M == NULL){
+      fprintf(stderr, "Not enough memory !");
+      exit(EXIT_FAILURE);
    }
-   return cmpt;
+   for(int i = 0; i < (max_x*2) - 1; i++){
+      M[i] = calloc(((2*max_y) - 1),  sizeof(int));
+      if(M[i] == NULL){
+         fprintf(stderr, "Not enough memory !");
+         exit(EXIT_FAILURE);
+      }
+   }
+   for(int i = 0; i < g->nb_nodes; i++){
+      n = game_node(g, i);
+      x = get_x(n);
+      y = get_y(n);
+      req_degree = get_required_degree(n);
+      M[x*2][y*2] = req_degree;
+   }
+   for(int i = 0; i < g->nb_nodes; i++){
+      n = game_node(g, i);
+      if(g->nb_dir == 8){
+         for(int d = NORTH; d < NE; d++){
+            if(get_degree_dir(g, i, d)){
+               x = get_x(n)*2;
+               y = get_y(n)*2;
+               vector_direction(&x_v, &y_v, d);
+               while((x+x_v < (2*max_x)-1 && x+x_v >=0) && (y+y_v < (2*max_y)-1 && y+y_v >= 0) && (!(M[x+x_v][y+y_v]))){
+                  x = x+x_v;
+                  y = y+y_v;
+                  M[x][y] = orientation(d);
+               }
+            }
+         }
+      }
+      else{
+         for(int d = NORTH; d < EAST; d++){
+            if(get_degree_dir(g, i, d)){
+               x = get_x(n)*2;
+               y = get_y(n)*2;
+               vector_direction(&x_v, &y_v, d);
+               while((x+x_v < (2*max_x)-1 && x+x_v >=0) && (y+y_v < (2*max_y)-1 && y+y_v >= 0) && (!(M[x+x_v][y+y_v]))){
+                  x = x+x_v;
+                  y = y+y_v;
+                  M[x][y] = orientation(d);
+               }
+            }
+         }
+      }
+   }
+   n = game_node(g, node_num);
+   x = get_x(n)*2;
+   y = get_y(n)*2;
+   vector_direction(&x_v, &y_v, dest);
+   while(M[x+x_v][y+y_v] <= 0){
+      x = x + x_v;
+      y = y + y_v;
+      if(M[x][y] != orientation(dest) && M[x][y] != 0){
+         for(int i = 0; i < (2*max_x)-1; i++){
+            free(M[i]);
+         }
+         free(M);
+         return false;
+      }
+   }
+   for(int i = 0; i < (2*max_x)-1; i++){
+      free(M[i]);
+   }
+   free(M);
+   return true;
 }
 
+bool can_add_bridge_dir (cgame g, int node_num , dir d){
+   node n = game_node(g, node_num);
+   switch(d){
+      case NORTH :
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][0]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
 
-int get_neighbour_dir (cgame g, int node_num, dir d){
-   
-   int x_node=get_x(game_node(g,node_num)); //on récupère les coords du noeud traité
-   int y_node=get_y(game_node(g,node_num));
-   
+      case SOUTH:
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][2]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
 
-   if (d == EAST){
-      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds HORIZONTALEMENT dans l'instance de jeu
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node + u) && (get_y(game_node(g,i)) == y_node))
-                                                                                                                                           
-               return i;
-         }
-      }
+      case WEST:
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][1]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
+
+      case EAST:
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][3]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
+
+      case NW :
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][4]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
+
+      case SW:
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][5]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
+
+      case SE:
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][6]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
+
+      case NE:
+         return get_degree(g, node_num) < get_required_degree(n) && g->bridges[node_num][7]<g->nb_max_bridges && get_neighbour_dir(g, node_num, d) != -1 && collisions(g, node_num, d);
+         break;
+      default:
+         break;
    }
-
-   if (d == WEST){
-      for (int u=1; u<=3; u++){ 
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node - u) && (get_y(game_node(g,i)) == y_node))
-                                                                                                                                           
-               return i;
-         }
-      }
-   }
-
-   if (d == NORTH){
-      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds VERTICALEMENT dans l'instance de jeu
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node) && (get_y(game_node(g,i)) == y_node + 1))
-                                                                                                                                           
-               return i;
-         }
-      }
-   }
-
-   if (d == SOUTH){
-      for (int u=1; u<=3; u++){ 
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node) && (get_y(game_node(g,i)) == y_node - 1))
-                                                                                                                                           
-               return i;
-         }
-      }
-   }
-
-   
-   if (d == NE){
-      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node + u) && (get_y(game_node(g,i)) == y_node + u))/*si on trouve un noeud différent
-                                                                                                                                             * du noeud traité et que ce noeud
-                                                                                                                                             * est le prochian qui
-                                                                                                                                             * se situe sur la même diagonale
-                                                                                                                                             * dans la dir choisie */
-                  return i;
-         
-         
-         
-         }
-      }
-      
-   }
-
-   if (d == SW){
-      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node - u) && (get_y(game_node(g,i)) == y_node - u))
-                                                                                                                                           
-               return i;
-         }
-      }
-   }
-   
-   if (d == NW){
-      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node - u) && (get_y(game_node(g,i)) == y_node + u))
-                                                                                                                                           
-               return i;
-         }
-      }
-   }
-
-   if (d == SE){
-      for (int u=1; u<=3; u++){ //permet de parcourir les noeuds en digonale dans l'instance de jeu
-         for (int i=0; i<g->nb_nodes;i++){ /*on parcourt la liste des noeuds*/
-            if ((game_node(g,node_num) != game_node(g,i)) && (get_x(game_node(g,i)) == x_node + u) && (get_y(game_node(g,i)) == y_node - u))
-                                                                                                                                           
-               return i;
-         }
-      }
-   }
-   
-   return -1;
-}
-
-
-int game_get_node_number (cgame g, int x, int y){
-   int i=0;
-   while (i < g->nb_nodes){
-      if (get_x(game_node(g, i)) == x && get_y(game_node(g, i)) == y)
-         return i;
-      i++;
-   }
-   return -1;
-}
-
-bool can_add_bridge_dir (cgame g, int node_num, dir d){
-
-   if ( get_neighbour_dir(g, node_num, d) == -1)
-      return 0;
-   return 1; ///////// AJOUTER LA VERIFICATION POUR LES CROISEMENTS !!!!!!!!!!!
+   return false;
 }
 
 void add_bridge_dir (game g, int node_num, dir d){
-   int entier =d ;
+   int neighbour = get_neighbour_dir(g, node_num, d);
+   switch(d){
+      case NORTH :
+         g->bridges[node_num][0]++;
+         g->bridges[neighbour][2]++;
+         break;
 
-   if (can_add_bridge_dir(g, node_num, d)){
+      case SOUTH:
+         g->bridges[node_num][2]++;
+         g->bridges[neighbour][0]++;
+         break;
 
-      int neighbour_dir = get_neighbour_dir(g,node_num,d);
+      case WEST:
+         g->bridges[node_num][1]++;
+         g->bridges[neighbour][3]++;
+         break;
 
-      g->bridges_already_build[node_num][entier]++;
+      case EAST:
+         g->bridges[node_num][3]++;
+         g->bridges[neighbour][1]++;
+         break;
 
-      switch (entier) // éviter répétition if sur la même variable "entier"
-      {
-         case 0:
-            g->bridges_already_build[neighbour_dir][2]++;
-            break;
-         case 1:  // WEST
-            g->bridges_already_build[neighbour_dir][3]++;
-            break;
-         case 2 : //SOUTH
-               g->bridges_already_build[neighbour_dir][0]++;
-               break;
-         case 3: //EAST
-            g->bridges_already_build[neighbour_dir][1]++;
-            break;
-      }
+       case NW :
+         g->bridges[node_num][4]++;
+         g->bridges[neighbour][6]++;
+         break;
+
+      case SW:
+         g->bridges[node_num][5]++;
+         g->bridges[neighbour][7]++;
+         break;
+
+      case SE:
+         g->bridges[node_num][6]++;
+         g->bridges[neighbour][4]++;
+         break;
+
+      case NE:
+         g->bridges[node_num][7]++;
+         g->bridges[neighbour][5]++;
+         break;
+   default:
+     break;
    }
+}
+
+void del_bridge_dir (game g, int node_num, dir d){
+   int neighbour = get_neighbour_dir(g, node_num, d);
+   switch(d){
+   case NORTH :
+     if(g->bridges[node_num][0]>0){
+       g->bridges[node_num][0]--;
+       g->bridges[neighbour][2]--;}
+     break;
+
+   case SOUTH:
+     if(g->bridges[node_num][2]>0){
+       g->bridges[node_num][2]--;
+       g->bridges[neighbour][0]--;
+     }
+     break;
+
+   case WEST:
+     if(g->bridges[node_num][1]>0){
+       g->bridges[node_num][1]--;
+       g->bridges[neighbour][3]--;
+     }
+     break;
+
+   case EAST:
+     if(g->bridges[node_num][3]>0){
+       g->bridges[node_num][3]--;
+       g->bridges[neighbour][1]--;
+     }
+     break;
+
+   case NW :
+     if(g->bridges[node_num][4]>0){
+       g->bridges[node_num][4]--;
+       g->bridges[neighbour][6]--;}
+     break;
+
+   case SW:
+     if(g->bridges[node_num][5]>0){
+       g->bridges[node_num][5]--;
+       g->bridges[neighbour][7]--;
+     }
+     break;
+
+   case SE:
+     if(g->bridges[node_num][6]>0){
+       g->bridges[node_num][6]--;
+       g->bridges[neighbour][4]--;
+     }
+     break;
+
+   case NE:
+     if(g->bridges[node_num][7]>0){
+       g->bridges[node_num][7]--;
+       g->bridges[neighbour][5]--;
+     }
+     break;
+   default:
+     break;
+   }
+}
+
+
+
+int get_degree_dir (cgame g, int node_num, dir d){
+  switch(d){
+  case NORTH :
+    return g->bridges[node_num][0];
+    break;
+
+  case SOUTH:
+    return g->bridges[node_num][2];
+    break;
+
+  case WEST:
+    return g->bridges[node_num][1];
+    break;
+
+  case EAST:
+    return g->bridges[node_num][3];
+    break;
+
+  case NW :
+    return g->bridges[node_num][4];
+    break;
+
+  case SW:
+    return g->bridges[node_num][5];
+    break;
+
+  case SE:
+    return g->bridges[node_num][6];
+    break;
+
+  case NE:
+    return g->bridges[node_num][7];
+    break;
+  default:
+    break;
+   }
+  return -1;
 }
