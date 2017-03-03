@@ -83,6 +83,28 @@ dir intostr(int i){ //Fonction qui converti le choix format int en une direction
          return SOUTH;
          break;
 
+      case 5:
+
+         return NW;
+         break;
+
+      case 6:
+
+         return SW;
+         break;
+
+      case 7:
+
+         return SE;
+         break;
+
+      case 8:
+
+         return NE;
+         break;
+         
+         
+
       default:
          return EXIT_FAILURE;
 
@@ -211,7 +233,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
                         printf("-"); // On comble ces trous
 
-                  }
+                        }
 
                }
 
@@ -312,7 +334,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
                }
 
 
-               if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==0)
+               if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==0 && game_get_node_number(g,x,y) != -1) //rajout d'une condition
                   printf("     "); //suivi d'espace pour l'esthétique
 
             }
@@ -353,13 +375,9 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
          }
 
 
-
-
-	 // printf("\n");
-	 // printf("\n");
-	 // printf("\n");
-	 // printf("\n");
+         
 	 printf("\n");
+         
 
                //PARTIE PONT VERTICAL | ou H
 
@@ -415,9 +433,9 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
                }
 
-               else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==0){
+                else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==0 && game_get_node_number(g,x,y) != -1){
 
-                  printf("        ");
+                  printf("    Q   ");
 
                }
 
@@ -489,6 +507,18 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
                   printf("   %d",get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH));
 
             }
+           }
+           
+           for (int x=0; x<=max; x++){
+
+            if (game_get_node_number(g,x,y) != -1 && game_get_node_number(g,x-1,y-1) != -1){ // Si le noeud et son voisin diagonal existe
+	     
+
+
+               if (get_degree_dir(g,game_get_node_number(g,x,y),SW) == 1 ){
+                  printf("/");
+               }
+            }
 
            }
 	   
@@ -499,9 +529,8 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
          printf("\n");
 	 compteur++;
 	 }
-	 
-
       }
+      
 
 
 
