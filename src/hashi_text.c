@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "game.h"
 #include "node.h"  
  
@@ -96,7 +97,7 @@ dir intostr(int i){ //Fonction qui converti le choix format int en une direction
 
 
 /*
- * Description: printspace affiche les espace dans l'instance du jeu afin de représenter les trous laissé par les noeuds inexistant aux coordonnées x,y
+ * Description: printspace(x,y,..) affiche des espaces dans l'instance du jeu afin de représenter les trous laissé par les noeuds inexistant aux coordonnées x,y
  */
 void printspace(game g,int x,int y, int nb_nodes, node nodes[]){ // Print de l'espace pour représenter les pont inexistant !
 
@@ -133,13 +134,19 @@ void printspace(game g,int x,int y, int nb_nodes, node nodes[]){ // Print de l'e
 
 
 
+
+
+
+
+
+
                                          // PARTIE PRINTF INSTANCE DE JEU//
 /*
- * Description: game_print afiche le jeu créé sur le l'interpréteur de commande
+ * Description: game_print afiche le jeu créé sur l'interpréteur de commande
  * Parameters:
- * -nb_nodes le nombre de noeuds dans le jeu
- * -g le jeu à afficher
- * -nodes[] le tableau de noeuds
+ * *nb_nodes le nombre de noeuds dans le jeu
+ * *g le jeu à afficher
+ * *nodes[] le tableau de noeuds
  */
 void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int nb_dir){ /* Affiche l'instance de jeu créée */
 
@@ -151,7 +158,133 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
 
 
-  debut: //étiquette début pour éviter de quitter le jeu soudainement !!
+
+
+
+
+   
+
+                        /////////////////////////// PARTIE MENU /////////////////////
+
+  menu:
+      while (1){
+
+         system("clear");
+         
+         printf("%5s","- MENU -\n");
+
+      printf("\n");
+
+      printf("1 - Reprendre");
+
+      printf("\n");
+
+      printf("2 - Nouvelle partie");
+
+      printf("\n");
+
+      printf("3 - Sauvegarder instance");
+
+      printf("\n");
+
+      printf("4 - Sauvegarder partie en cours\n");
+
+      printf("5 - Solution\n");
+
+      printf("0 - Quitter\n");
+
+      printf("\n");
+
+
+      scanf("%d", &choix);
+
+      if( choix == 1 || choix == 2)
+         goto debut;
+
+      else if (choix == 3){
+
+         FILE *Fpointer;
+
+         Fpointer = fopen("../save/game_default.txt","w");
+
+         if(Fpointer == NULL){
+            printf("Impossible d'ouvrir le fichier de sauvegarde, \n");
+            printf("Nous sommes désolé, veuillez lancer le jeu depuis le répertoire build : ./src/hashi_text \n");
+            exit(EXIT_FAILURE);
+         }
+
+         else{
+            fprintf(Fpointer,"%d %d %d \n",nb_nodes,game_nb_max_bridges,nb_dir);
+            int compteur;
+
+            printf("Sauvegarde en cours ..\n");
+            system("sleep 1");
+
+            for (compteur = 0; compteur < nb_nodes; compteur++){
+               int x = get_x(nodes[compteur]);
+               int y = get_y(nodes[compteur]);
+               fprintf(Fpointer, "%d %d %d \n",x,y,get_required_degree(nodes[compteur]));
+            }
+         }
+         printf("(100%%) Le jeu a été sauvegardé\n");
+         fclose(Fpointer);
+         system("sleep 2");
+      }
+
+      else if (choix == 4){
+
+         FILE *Fpointer;
+         Fpointer = fopen("../save/sauvegarde.txt","w");
+
+         if(Fpointer == NULL){
+            printf("Impossible d'ouvrir le fichier de sauvegarde, \n");
+            printf("Nous sommes désolé, veuillez lancer le jeu depuis le répertoire build : ./src/hashi_text \n");
+            exit(EXIT_FAILURE);
+         }
+         
+         else{
+            fprintf(Fpointer,"%d %d %d \n",nb_nodes,game_nb_max_bridges,nb_dir);
+            int compteur;
+
+            printf("Sauvegarde en cours ..\n");
+            system("sleep 1");
+            
+            if (nb_dir == 4){
+               for (compteur = 0; compteur < nb_nodes; compteur++){
+                  int x = get_x(nodes[compteur]);
+                  int y = get_y(nodes[compteur]);
+                  fprintf(Fpointer,"%d %d %d %d %d %d %d \n",x,y,get_required_degree(nodes[compteur]), get_degree_dir(g,compteur,NORTH), get_degree_dir(g,compteur,WEST),get_degree_dir(g,compteur,SOUTH),get_degree_dir(g,compteur,EAST) );
+               }
+            }
+            if (nb_dir == 8){
+               for (compteur = 0; compteur < nb_nodes; compteur++){
+                  int x = get_x(nodes[compteur]);
+                  int y = get_y(nodes[compteur]);
+                  fprintf(Fpointer, "%d %d %d %d %d %d %d %d %d %d %d \n",x,y,get_required_degree(nodes[compteur]), get_degree_dir(g,compteur,NORTH), get_degree_dir(g,compteur,WEST), get_degree_dir(g,compteur,SOUTH), get_degree_dir(g,compteur,EAST), get_degree_dir(g,compteur,NW), get_degree_dir(g,compteur,SW), get_degree_dir(g,compteur,SE), get_degree_dir(g,compteur,NE));
+               }
+            }
+            printf("(100%%) Le jeu a été sauvegardé\n");
+            fclose(Fpointer);
+            system("sleep 2");
+         }
+      }
+      
+
+
+      else if (choix == 0)
+         exit(EXIT_SUCCESS);
+      }
+
+                 //////////////////////////////FIN MENU /////////////////////////////
+      
+
+     
+
+
+      ////////////////////////NOUVELLE PARTIE //////////////////////////
+
+  debut: //étiquette début pour éviter de quitter le jeu à chaque fois !!
+
 
    while (1){
       system("clear");
@@ -548,12 +681,13 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
       printf(" %s\n",msg); // Print le message d'erreur
       sprintf(msg," \n"); // Vide le tableau de message d'erreur
 
-      printf(" Choisissez une action 1:ajouter 2:supprimer 0:quitter\n ");
+      printf(" Choisissez une action 1:ajouter 2:supprimer 0:menu\n ");
 
       scanf("%d",&choix);
 
       if (choix ==0)
-         break;
+         goto menu;
+               ;
 
       if (choix == 1){
          printf("\n");
@@ -678,7 +812,7 @@ int main(void){
    for (int i=0;i<7;i++)
       nodes[i]= new_node(tnodes[i][0],tnodes[i][1],tnodes[i][2]); //On rempli le tableau de node !
 
-   game g = new_game(7, nodes,6,4);
+   game g = new_game(7, nodes,6,8);
    game_print(7,g, nodes,(game_nb_max_bridges(g)),8);
 
    if(game_over(g)){
