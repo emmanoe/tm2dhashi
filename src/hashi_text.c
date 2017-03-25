@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "game.h"
-#include "node.h"  
+#include "../include/game.h"
+#include "../include/node.h"  
  
 
  

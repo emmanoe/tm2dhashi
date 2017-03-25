@@ -1,2 +1,2 @@
 add_library(hashi
-        game.c node.c)
+        ../src/game.c ../src/node.c)
