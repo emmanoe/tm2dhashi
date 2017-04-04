@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <math.h>
 #include "model.h"
+#include "load.h"
 
 #include "../include/game.h"
 #include "../include/node.h"
@@ -30,7 +31,7 @@ struct Env_t {
 
    SDL_Texture * background; // Arrière plan
    SDL_Texture ** texture_node; // iles du jeux
-   int bridge[500]; // a corriger 
+   int * bridge;
    int max_x, max_y;
    int nb_nodes;
    game g;
@@ -38,106 +39,61 @@ struct Env_t {
 
 /* **************************************************************** */
 
-/*Initialise les champs de la structure correspondant avec la plus grande des valeurs prise par les composantes x et y */
+/*
+* Description: taille_tab initialise les champs de la structure correspondant avec la plus grande des valeurs prise par les composantes x et y par les différents noeuds du jeu.
+* Parameter : deux pointeurs qui pointent les champs de la structure
+* Return: cette fonction permet aussi de retourner la plus grande valeur des deux.
+*/
 
 int taille_tab(Env* env,int* pt_x, int* pt_y, int nb_nodes)
 {
-    (*pt_x)=-1;
-    (*pt_y)=-1;
-    for(int i= 0; i < nb_nodes; i++)
-    {
-       if((*pt_x) < get_x(game_node(env->g,i)))
-            (*pt_x) = get_x(game_node(env->g,i));
-       if((*pt_y) < get_y(game_node(env->g,i) ))
-            (*pt_y) = get_y(game_node(env->g,i));
-    }
-    (*pt_x)+=1;
-    (*pt_y)+=1;
+    (*pt_x)=-1;(*pt_y)=-1;
+    for(int i= 0; i < nb_nodes; i++){
+       if((*pt_x) < get_x(game_node(env->g,i)))(*pt_x) = get_x(game_node(env->g,i));
+       if((*pt_y) < get_y(game_node(env->g,i) ))(*pt_y) = get_y(game_node(env->g,i));}
 
-    if (env->max_x> env->max_y)
-       return env->max_x;
-    return env->max_y;
-}
+    (*pt_x)+=1;(*pt_y)+=1;
+    if (env->max_x> env->max_y)return env->max_x;return env->max_y;}
 
 
 
 Env * init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[])
 {
-   /* Initialisation de l'environnement */
-   Env * env = malloc(sizeof(struct Env_t));
 
-   /* chargement des parametres du jeu */
-   int i,j,k;
-   char *path = argv[1];
-   FILE* Fpointer = fopen(path,"r");
-   if(Fpointer == NULL) ERROR("Impossible d'ouvrir le fichier %s \n", path);
-   fscanf(Fpointer,"%d %d %d",&i,&j,&k);
-   int nb_max_bridges = j;
-   printf("j=%d\n",nb_max_bridges);
-   int nb_dir = k;assert(nb_dir == 4 || nb_dir == 8);
+   PRINT("Cliques gauche : ajout de ponts.\n");
+   PRINT("Cliques droit : suppression de ponts\n");
+   PRINT("Press ESC to quit. Enjoy this my Hashi SDL2 sample !\n");
+
+   /* Initialisation de l'environnement */
+
+   Env * env = malloc(sizeof(struct Env_t));
+   game g = load_default_game(argv[1]);
+   int i = game_nb_nodes(g);env->g = g;
 
    /* intialisation des champs de la structure */
-   env->nb_nodes = i; // "i" lu à partir du fichier
-   env->texture_node =  malloc( (i+1) * sizeof(SDL_Texture *));
+   env->texture_node =  malloc( i * sizeof(SDL_Texture *));
+   if(env->texture_node==NULL)exit(EXIT_FAILURE);
+   env->bridge = malloc( i * sizeof(int));
+   if(env->bridge==NULL)exit(EXIT_FAILURE);
+   env->nb_nodes = game_nb_nodes(g);
 
-   /* load_default_node */
-   int ch=0;
-   int nb_lines=1;
-   long pointer_old_location = ftell(Fpointer);
-   fseek(Fpointer,0,SEEK_SET);
+   /* initialisation du fond d'écran texture de type PNG image */
+   env->background = IMG_LoadTexture(ren, BACKGROUND);
+   if(!env->background)ERROR("IMG_LoadTexture: %s\n", BACKGROUND);
 
-   /* check if nb_node match with the file number lines*/
-   while(!feof(Fpointer)){
-      ch = fgetc(Fpointer);
-      if(ch == '\n'){ch = fgetc(Fpointer);
-         if(isdigit(ch)){nb_lines++;}}}
-
-   fseek(Fpointer,pointer_old_location,SEEK_SET); // On repositionne le pointeur à sa position initiale
-   int var = (nb_lines) - env->nb_nodes; // On fait la difference pour savoir si c'est le bon nombre de lignes.
-   assert( var > 0);
-
-   /* intialisation du jeu g */
-   node nodes[i];
-   for (int compt = 0; compt < env->nb_nodes;compt ++){fscanf(Fpointer,"%d %d %d",&i,&j,&k);
-      nodes[compt]=new_node(i,j,k);}
-   game g = new_game(env->nb_nodes,nodes,nb_max_bridges,nb_dir);env->g = g;
-
-   /* **************************************************************** */
-
-   PRINT("TEST1\n");
-   PRINT("TEST2\n");
-
-   /* init background texture from PNG image */
-  env->background = IMG_LoadTexture(ren, BACKGROUND);
-
-  if(!env->background)
-     ERROR("IMG_LoadTexture: %s\n", BACKGROUND);
-
-  /* init node texture using Arial font */
+  /* initialisation du node texture utilisant la police Arial font */
   SDL_Color color = { 255, 255, 255, 255 }; /* white color in RGBA */
-
   TTF_Font * font = TTF_OpenFont(FONT, FONTSIZE); /* police de caractère */
-
-  if(!font)
-     ERROR("TTF_OpenFont: %s\n", FONT);
-
-  TTF_SetFontStyle(font, TTF_STYLE_BOLD); // TTF_STYLE_ITALIC | TTF_STYLE_NORMAL
-
-  char  s[1]; // s necéssaire pour convertir le noeuds (int) en  text (* char) pour TTF_RenderText
-
-
-  for (int i =0; i< env->nb_nodes; i++){
+  if(!font)ERROR("TTF_OpenFont: %s\n", FONT);
+  TTF_SetFontStyle(font, TTF_STYLE_BOLD); /* TTF_STYLE_ITALIC | TTF_STYLE_NORMAL*/
+  char  s[1]; /* s necéssaire pour convertir le noeuds (int) en  text (* char) pour TTF_RenderText */
+  for (int i =0; i< game_nb_nodes(g); i++){ /*Chaque noeud est stocké dans un tableau*/
      sprintf(s,"%d",get_required_degree(game_node(env->g,i)));
-     SDL_Surface * surf = TTF_RenderText_Blended(font, s, color); // blended rendering for ultra nice text
+     SDL_Surface * surf = TTF_RenderText_Blended(font, s, color); /* Cre&tion rendu pour chaque noeud */
      env->texture_node[i] = SDL_CreateTextureFromSurface(ren, surf);
-     SDL_FreeSurface(surf);
-  }
+     SDL_FreeSurface(surf);}
 
   TTF_CloseFont(font);
-  fclose(Fpointer);
-  for (int a = 0; a < env->nb_nodes;a ++)
-      delete_node(nodes[a]);
-
   return env;
 }
 
@@ -213,6 +169,15 @@ void render(SDL_Window* win, SDL_Renderer* ren, Env * env)
 
 bool process(SDL_Window* win, SDL_Renderer* ren, Env * env, SDL_Event * e)
 {
+   if (e->type == SDL_QUIT)
+       return true;
+   if (e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE)
+         return true;
+   if (game_over(env->g)){
+      printf("CONGRATULATION YOU WIN !\n");
+      return true;
+   }
+
    int w, h;
 
    SDL_GetWindowSize(win, &w, &h);
@@ -230,14 +195,13 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env * env, SDL_Event * e)
 
             env->bridge[i] = 1;
             for (int x = 0; x <4; x++){
-               if (env->bridge[get_neighbour_dir(env->g,i,x)] == 1){
-                  if (get_degree(env->g,get_neighbour_dir(env->g,i,x)) != get_required_degree(game_node(env->g,get_neighbour_dir(env->g,i,x))) && can_add_bridge_dir(env->g,i,x) ) {
-                     add_bridge_dir(env->g,i,x);
-                     printf("i = %d and get_degree_0 = %d\n",i,get_degree(env->g,get_neighbour_dir(env->g,i,x)));;
+               if (get_neighbour_dir(env->g,i,x) != -1)
+                  if ( env->bridge[get_neighbour_dir(env->g,i,x)] == 1){
+                     if (get_degree(env->g,get_neighbour_dir(env->g,i,x)) != get_required_degree(game_node(env->g,get_neighbour_dir(env->g,i,x))) && can_add_bridge_dir(env->g,i,x) ) {
+                        add_bridge_dir(env->g,i,x);}
+                     for (int cmpt = 0; cmpt < env->nb_nodes;cmpt ++)
+                        env->bridge[cmpt] = 0;
                   }
-                  for (int cmpt = 0; cmpt < env->nb_nodes;cmpt ++)
-                     env->bridge[cmpt] = 0;
-               }
             }
          }
          for (int i = 0; i< env->nb_nodes;i++){
@@ -284,7 +248,7 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env * env, SDL_Event * e)
       for (int i = 0; i< env->nb_nodes;i++){
          if (get_required_degree(game_node(env->g,i)) != get_degree(env->g,i)  ){
 
-            SDL_Color color = { 255, 255, 255, 0 }; /* purple color in RGBA */
+            SDL_Color color = { 255, 255, 255, 0 }; /* white color in RGBA */
             TTF_Font * font2 = TTF_OpenFont(FONT, FONTSIZE); /* police de caractère */
             if(!font2)
                ERROR("TTF_OpenFont: %s\n", FONT);
@@ -301,48 +265,8 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env * env, SDL_Event * e)
       }
 
    }
-   if (game_over(env->g))
-   {
-      SDL_Color color = { 0, 0, 255, 255 }; /* blue color in RGBA */
-      TTF_Font * font = TTF_OpenFont(FONT, FONTSIZE);
-      if(!font) ERROR("TTF_OpenFont: %s\n", FONT);
-      TTF_SetFontStyle(font, TTF_STYLE_BOLD); // TTF_STYLE_ITALIC | TTF_STYLE_NORMAL
-      SDL_Surface * surf = TTF_RenderText_Blended(font, "FELICITATION VOUS AVEZ GAGNEZ!", color); // blended rendering for ultra nice text
-
-      env->texture_node[env->nb_nodes] = SDL_CreateTextureFromSurface(ren, surf);
-      SDL_FreeSurface(surf);
-      TTF_CloseFont(font);
-
-      /* render you win texture */
-
-      SDL_Rect rect;
-
-      /* get current window size */
-      int w, h;
-      SDL_GetWindowSize(win, &w, &h);
-
-      /* render text texture */
-      SDL_QueryTexture(env->texture_node[env->nb_nodes], NULL, NULL, &rect.w, &rect.h);
-      rect.x = w/2 - rect.w/2; rect.y = h/2 - rect.h/2; 
-      SDL_RenderCopy(ren, env->texture_node[env->nb_nodes], NULL, &rect);
-
-      printf("YOU WIN\n");
-      return true;
-   }
-   //printf("i already went there\n");
-   if (e->type == SDL_MOUSEBUTTONDOWN)
-      printf("coucou\n");
-
-
-
-
-
-   if (e->type == SDL_QUIT) {
-      return true;
-   }
-
-   /* PUT YOUR CODE HERE TO PROCESS EVENTS */
-   return false; 
+   
+   return false;
 }
 
 
@@ -351,17 +275,12 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env * env, SDL_Event * e)
 
 void clean(SDL_Window* win, SDL_Renderer* ren, Env * env)
 {
-  /* PUT YOUR CODE HERE TO CLEAN MEMORY */
+   for (int i = 0; i<env->nb_nodes; i++){SDL_DestroyTexture(env->texture_node[i]);}
    SDL_DestroyTexture(env->background);
-
-   for (int i = 0; i<=env->nb_nodes; i++)
-      SDL_DestroyTexture(env->texture_node[i]);
    free(env->texture_node);
-
+   free(env->bridge);
    delete_game(env->g);
-
-   free(env);
-}
+   free(env);}
 
 /* **************************************************************** */
 
