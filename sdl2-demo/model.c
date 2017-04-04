@@ -187,7 +187,6 @@ bool process(SDL_Window* win, SDL_Renderer* ren, Env * env, SDL_Event * e)
    if (e->type == SDL_MOUSEBUTTONDOWN){
       if (e->button.button == SDL_BUTTON_LEFT){
       SDL_GetMouseState(&(mouse.x), &(mouse.y));
-      printf("mouse.x=%d, mouse.y=%d\n",mouse.x,mouse.y);
 
       for (int i = 0; i<env->nb_nodes; i++){
 
