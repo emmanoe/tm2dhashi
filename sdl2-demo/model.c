@@ -61,8 +61,8 @@ Env * init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[])
 {
 
    PRINT("Cliques gauche : ajout de ponts.\n");
-   PRINT("Cliques droit : suppression de ponts\n");
-   PRINT("Press ESC to quit. Enjoy this my Hashi SDL2 sample !\n");
+   PRINT("Cliques droit : suppression de ponts.\n");
+   PRINT("Press ESC to quit. Enjoy my Hashi SDL2 sample !\n");
 
    /* Initialisation de l'environnement */
 
@@ -73,7 +73,7 @@ Env * init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[])
    /* intialisation des champs de la structure */
    env->texture_node =  malloc( i * sizeof(SDL_Texture *));
    if(env->texture_node==NULL)exit(EXIT_FAILURE);
-   env->bridge = malloc( i * sizeof(int));
+   env->bridge = calloc( i, sizeof(int));
    if(env->bridge==NULL)exit(EXIT_FAILURE);
    env->nb_nodes = game_nb_nodes(g);
 
