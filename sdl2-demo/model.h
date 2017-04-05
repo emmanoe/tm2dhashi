@@ -21,7 +21,7 @@ typedef struct Env_t Env;
 
 /* **************************************************************** */
      
-#define APP_NAME "SDL2 Demo"
+#define APP_NAME "Hashi TM2D "
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 600
 #define DELAY 100
