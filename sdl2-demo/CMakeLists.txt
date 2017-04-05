@@ -18,7 +18,7 @@ target_link_libraries(demo
 	${SDL2_IMAGE_LIBRARY}
 	${SDL2_TTF_LIBRARY})
 
-add_executable(model main.c model.c game.c node.c load.c)
+add_executable(model main.c model.c game.c node.c load.c drawline.c manage_bridge.c)
 target_link_libraries(model
 	${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARY}
