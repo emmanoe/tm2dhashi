@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
     SDL_RenderPresent(ren);
     SDL_Delay(DELAY);
   }
-  system("sleep 2");
+  system("sleep 1");
   
   /* clean your environment */
   clean(win, ren, env);
