@@ -157,8 +157,8 @@ void clean(SDL_Window* win, SDL_Renderer* ren, Env * env)
    for (int i = 0; i<game_nb_nodes(env->g); i++){SDL_DestroyTexture(env->texture_node[i]);}
    SDL_DestroyTexture(env->background);
    free(env->texture_node);
-   free(env->bridge);
    delete_game(env->g);
+   free(env->bridge);
    free(env);}
 
 /* **************************************************************** */

@@ -48,8 +48,8 @@ game load_default_game (const char* path){
 
 /*
 * Description: taille_tab initialise les champs de la structure correspondant avec la plus grande des valeurs prise par les composantes x et y par les différents noeuds du jeu.
-* Parameter : deux pointeurs qui pointent les champs de la structure
-* Return: cette fonction permet aussi de retourner la plus grande valeur des deux.
+* Parameter : deux pointeurs contenant l'adresse des champs x et y de la structure
+* Return: void.
 */
 
 void init_taille_tab(game g,int* pt_x, int* pt_y, int nb_nodes)
