@@ -1,0 +1,1 @@
+/usr/bin/cc  -std=c99 -g -Wall   CMakeFiles/demo.dir/main.c.o CMakeFiles/demo.dir/demo.c.o  -o demo -rdynamic -Wl,-Bstatic -lSDL2main -Wl,-Bdynamic -lSDL2 -lpthread -lSDL2_image -lSDL2_ttf 
