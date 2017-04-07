@@ -44,15 +44,16 @@ struct Env_t {
 Env * init(SDL_Window* win, SDL_Renderer* ren, int argc, char* argv[])
 {
 
-   PRINT("Cliques gauche : ajout de ponts.\n");
-   PRINT("Cliques droit : suppression de ponts.\n");
-   PRINT("Press ESC to quit. Enjoy my Hashi SDL2 sample !\n");
-
    /* Initialisation de l'environnement */
 
    Env * env = malloc(sizeof(struct Env_t));
    game g = load_default_game(argv[1]);
    int i = game_nb_nodes(g);env->g = g;
+
+   /* Instructions */
+   PRINT("Cliques gauche : ajout de ponts.\n");
+   PRINT("Cliques droit : suppression de ponts.\n");
+   PRINT("Press ESC to quit. Enjoy my Hashi SDL2 sample !\n");
 
    /* intialisation des champs de la structure */
    env->texture_node =  malloc( i * sizeof(SDL_Texture *));

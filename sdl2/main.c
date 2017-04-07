@@ -10,7 +10,11 @@
 /* **************************************************************** */
      
 int main(int argc, char * argv[])
-{ 
+{
+
+   /* vérification paramètre*/
+   if(argv[1] == NULL){printf("model: opérande de fichier manquant \n"); ERROR("Saisissez « ./model nom-du-fichier.txt »\n");}
+
   /* initialize SDL2 and some extensions */
   if(SDL_Init(SDL_INIT_VIDEO) != 0) ERROR("Error: SDL_Init VIDEO (%s)", SDL_GetError());  
   if(IMG_Init(IMG_INIT_PNG & IMG_INIT_PNG) != IMG_INIT_PNG) ERROR("Error: IMG_Init PNG (%s)", SDL_GetError());  

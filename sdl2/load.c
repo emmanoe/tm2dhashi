@@ -13,7 +13,8 @@ game load_default_game (const char* path){
 
    /* chargement des parametres du jeu */
    FILE* Fpointer = fopen(path,"r");
-   if(Fpointer == NULL) ERROR("Impossible d'ouvrir le fichier %s \n", path);
+
+   if(Fpointer == NULL)ERROR("Impossible d'ouvrir le fichier %s \n", path);
 
    int i,j,k;
    fscanf(Fpointer,"%d %d %d",&i,&j,&k);
