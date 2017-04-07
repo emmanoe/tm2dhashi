@@ -1,1 +1,0 @@
-/usr/bin/cc  -std=c99 -g -Wall   CMakeFiles/model.dir/main.c.o CMakeFiles/model.dir/model.c.o CMakeFiles/model.dir/game.c.o CMakeFiles/model.dir/node.c.o CMakeFiles/model.dir/load.c.o CMakeFiles/model.dir/drawline.c.o CMakeFiles/model.dir/manage_bridge.c.o  -o model -rdynamic -Wl,-Bstatic -lSDL2main -Wl,-Bdynamic -lSDL2 -lpthread -lSDL2_image -lSDL2_ttf 

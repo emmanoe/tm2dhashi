@@ -1,4 +1,0 @@
-/net/cremi/edelar001/git/tm2dhashi/sdl2-demo/build/CMakeFiles/edit_cache.dir
-/net/cremi/edelar001/git/tm2dhashi/sdl2-demo/build/CMakeFiles/rebuild_cache.dir
-/net/cremi/edelar001/git/tm2dhashi/sdl2-demo/build/CMakeFiles/model.dir
-/net/cremi/edelar001/git/tm2dhashi/sdl2-demo/build/CMakeFiles/demo.dir
