@@ -1,0 +1,4 @@
+Make install dans le CMakeList.txt à la racine
+Make install dans le Cmakelist.txt dans sdl2 qui mets l exe dans ./sdl2 !
+Rajouter plus de map.
+Make test

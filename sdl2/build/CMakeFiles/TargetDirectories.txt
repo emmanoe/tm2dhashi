@@ -1,0 +1,7 @@
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/install/strip.dir
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/install/local.dir
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/model.dir
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/rebuild_cache.dir
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/edit_cache.dir
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/install.dir
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/list_install_components.dir

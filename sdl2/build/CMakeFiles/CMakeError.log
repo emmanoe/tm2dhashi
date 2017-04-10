@@ -1,0 +1,55 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_63322/fast"
+/usr/bin/make -f CMakeFiles/cmTC_63322.dir/build.make CMakeFiles/cmTC_63322.dir/build
+make[1] : on entre dans le répertoire « /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp »
+Building C object CMakeFiles/cmTC_63322.dir/CheckSymbolExists.c.o
+/usr/bin/cc   -std=c99 -g -Wall    -o CMakeFiles/cmTC_63322.dir/CheckSymbolExists.c.o   -c /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_63322
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_63322.dir/link.txt --verbose=1
+/usr/bin/cc -std=c99 -g -Wall     -rdynamic CMakeFiles/cmTC_63322.dir/CheckSymbolExists.c.o  -o cmTC_63322 
+CMakeFiles/cmTC_63322.dir/CheckSymbolExists.c.o : Dans la fonction « main » :
+/home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:8 : référence indéfinie vers « pthread_create »
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_63322.dir/build.make:97 : la recette pour la cible « cmTC_63322 » a échouée
+make[1]: *** [cmTC_63322] Erreur 1
+make[1] : on quitte le répertoire « /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_63322/fast » a échouée
+make: *** [cmTC_63322/fast] Erreur 2
+
+File /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_fcbaf/fast"
+/usr/bin/make -f CMakeFiles/cmTC_fcbaf.dir/build.make CMakeFiles/cmTC_fcbaf.dir/build
+make[1] : on entre dans le répertoire « /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp »
+Building C object CMakeFiles/cmTC_fcbaf.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -std=c99 -g -Wall -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_fcbaf.dir/CheckFunctionExists.c.o   -c /usr/local/share/cmake-3.8/Modules/CheckFunctionExists.c
+Linking C executable cmTC_fcbaf
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fcbaf.dir/link.txt --verbose=1
+/usr/bin/cc -std=c99 -g -Wall -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_fcbaf.dir/CheckFunctionExists.c.o  -o cmTC_fcbaf -lpthreads 
+/usr/bin/ld : ne peut trouver -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_fcbaf.dir/build.make:97 : la recette pour la cible « cmTC_fcbaf » a échouée
+make[1]: *** [cmTC_fcbaf] Erreur 1
+make[1] : on quitte le répertoire « /home/emmanoe/git/tm2dhashi/sdl2/build/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_fcbaf/fast » a échouée
+make: *** [cmTC_fcbaf/fast] Erreur 2
+
+
