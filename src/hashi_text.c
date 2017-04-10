@@ -271,8 +271,10 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
       
 
 
-      else if (choix == 0)
+      else if (choix == 0){
+         system("clear");
          exit(EXIT_SUCCESS);
+      }
       }
 
                  //////////////////////////////FIN MENU /////////////////////////////

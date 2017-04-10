@@ -18,7 +18,6 @@ include_directories(include)
 
 include_directories(src)
 
-add_library(hashi ./src/game.c ./src/node.c)
 
 add_executable(hashi_solve ./src/hashi_solve.c ./src/node.c ./src/game.c)
 
