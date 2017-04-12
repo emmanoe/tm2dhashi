@@ -1,1 +1,0 @@
-install(TARGETS hashi_graph RUNTIME DESTINATION ${CMAKE_SOURCE_DIR})
