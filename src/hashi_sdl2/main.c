@@ -13,7 +13,7 @@ int main(int argc, char * argv[])
 {
 
    /* vérification paramètre*/
-   if(argv[1] == NULL){printf("hashi_graph: opérande de fichier manquant \n"); ERROR("Saisissez « ./hashi_graph nom-du-fichier.txt »\n");}
+   if(argv[1] == NULL){printf("hashi_sdl2: opérande de fichier manquant \n"); ERROR("Saisissez « ./hashi_sdl2 nom-du-fichier.txt »\n");}
 
   /* initialize SDL2 and some extensions */
   if(SDL_Init(SDL_INIT_VIDEO) != 0) ERROR("Error: SDL_Init VIDEO (%s)", SDL_GetError());  
