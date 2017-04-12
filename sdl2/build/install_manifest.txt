@@ -1,1 +1,0 @@
-/home/emmanoe/git/tm2dhashi/sdl2/model
