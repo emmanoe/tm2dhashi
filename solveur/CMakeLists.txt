@@ -14,12 +14,12 @@ else()
 endif()
 
 
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
-include_directories(src)
+include_directories(${CMAKE_SOURCE_DIR}/src/solveur)
 
 
-add_executable(hashi_solve ./src/hashi_solve.c ./src/node.c ./src/game.c)
+add_executable(hashi_solve ${CMAKE_SOURCE_DIR}/src/solveur/hashi_solve.c ${CMAKE_SOURCE_DIR}/src/node.c ${CMAKE_SOURCE_DIR}/src/game.c)
 
 target_link_libraries(hashi_solve m hashi)
 
