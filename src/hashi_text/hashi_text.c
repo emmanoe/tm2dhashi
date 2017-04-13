@@ -214,11 +214,10 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
          FILE *Fpointer;
 
-         Fpointer = fopen("../save/game_default.txt","w");
+         Fpointer = fopen("save/game_default.txt","w");
 
          if(Fpointer == NULL){
             printf("Impossible d'ouvrir le fichier de sauvegarde, \n");
-            printf("Nous sommes désolé, veuillez lancer le jeu depuis le répertoire build : ./src/hashi_text \n");
             exit(EXIT_FAILURE);
          }
 
@@ -243,11 +242,10 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
       else if (choix == 4){
 
          FILE *Fpointer;
-         Fpointer = fopen("../save/sauvegarde.txt","w");
+         Fpointer = fopen("save/sauvegarde.txt","w");
 
          if(Fpointer == NULL){
             printf("Impossible d'ouvrir le fichier de sauvegarde, \n");
-            printf("Nous sommes désolé, veuillez lancer le jeu depuis le répertoire build : ./src/hashi_text \n");
             exit(EXIT_FAILURE);
          }
          
