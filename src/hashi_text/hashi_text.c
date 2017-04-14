@@ -773,7 +773,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
       if(game_over(g)){
       printf("\n");
       printf("\n");
-      printf("GAME OVER                            \n");
+      printf("Félicitation vous avez gagné               \n");
       system("sleep 2");
       break;
    }
