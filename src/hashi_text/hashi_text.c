@@ -651,40 +651,7 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
                                                  // PARTIE INTERACTION//
 
-      
-
-
-
-      /* int no=game_get_node_number(g, 1, 1);
-      printf("%d",no);
-      int testNE=get_neighbour_dir(g, no, NE);
-      printf("%d",testNE);
-      int testNW=get_neighbour_dir(g, no, NW);
-      printf("%d",testNW);
-      int testSE=get_neighbour_dir(g, no, SE);
-      printf("%d",testSE);
-      int testSW=get_neighbour_dir(g, no, SW);
-      printf("%d\n",testSW);
-     
-
-      int nb_max = 2;
-  
-      for (int y=nb_max; y>=0; y--){
-        for (int x=0; x<=nb_max; x++){
-          int nodenum=game_get_node_number(g,x,y);
-	  if (nodenum != -1){
-	    int node_deg=get_required_degree(nodes[nodenum]);
-	    printf("%d   ",node_deg);
-          }
-          else{
-	    printf("    ");
-	    }
-        }
-        printf("\n");
-	printf("\n");
-	printf("\n");
-	}*/
-
+   
 
 
       printf(" %s\n",msg); // Print le message d'erreur
@@ -803,6 +770,13 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
          }
          else goto sup;
       }
+      if(game_over(g)){
+      printf("\n");
+      printf("\n");
+      printf("GAME OVER                            \n");
+      system("sleep 2");
+      break;
+   }
    }
 }
 
@@ -824,12 +798,7 @@ int main(void){
    game g = new_game(7, nodes,6,8);
    game_print(7,g, nodes,(game_nb_max_bridges(g)),8);
 
-   if(game_over(g)){
-      printf("\n");
-      printf("\n");
-      printf("GAME OVER                            \n");
-   }
-   else if(!game_over(g)){
+   if(!game_over(g)){
       printf("\n");
       printf("YOU LOSE !\n");
    }
