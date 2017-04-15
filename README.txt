@@ -1,4 +1,4 @@
-==== HASHI ====
+                          ==== HASHI ====
 
 Dans ce dépot vous trouverez, après compilation, deux exécutables du jeu HASHIWOKAKERO.
 La première version est la version texte (hashi_graph) jouable directement dans 
@@ -33,12 +33,15 @@ $ ./hashi_graph/nom-du-fichier.txt
 
  ### Autre
 
- Un solveur récursif est aussi disponible dans le dossier solveur/
+ 1 - Un solveur récursif est aussi disponible dans le dossier solveur/
  Pour l'exécuter, il suffit de lancer aprés la compilation 
 
  $ ./hashi_solve/le_nom_du_fichier.txt
 
- Les differentes instances du jeu ce trouve dans le dossier map/
+ 2 - Les differentes instances du jeu ce trouve dans le dossier map/
+
+ 3 - Exécuter le script ./cleanbuil.sh pour suprimer tous les exécutables générés
+
 
 
 
