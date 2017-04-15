@@ -1,7 +1,7 @@
 add_library(hashi
         ../src/game.c ../src/node.c)
 
-add_executable(hashi_text game.c node.c ./hashi_text/hashi_text.c)
+add_executable(hashi_text game.c node.c ./hashi_text/affichage.c ./hashi_text/menu.c ./hashi_text/fun.c ./hashi_text/hashi_text.c ./solveur/hashi_solve.c ./hashi_sdl2/load.c)
 
 add_executable(hashi_sdl2 hashi_sdl2/hashi_sdl2 hashi_sdl2/drawline.c hashi_sdl2/load.c hashi_sdl2/main.c hashi_sdl2/manage_bridge.c ${CMAKE_SOURCE_DIR}/src/game.c ${CMAKE_SOURCE_DIR}/src/node.c)
 target_link_libraries(hashi_sdl2

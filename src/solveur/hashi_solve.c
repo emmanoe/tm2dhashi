@@ -6,7 +6,7 @@
 #include "../include/game.h"
 #include "../include/node.h"
 
-game load_default_game (const char* path){
+game load_default_game_solveur (const char* path){
 
    int i,j,k;
 
@@ -251,17 +251,3 @@ game solveur(game g){
    return solveur_recursif(g,0);
 }
 
-
-
-int main(int argc, char *argv[]){
-
-   game g = load_default_game(argv[1]);
-
-   game solved = solveur(g);
-
-   delete_game(g);
-
-   save_game(solved, argv[1]);
-
-   return EXIT_SUCCESS;
-}

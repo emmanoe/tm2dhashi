@@ -1,143 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/game.h"
-#include "../include/node.h"  
- 
-
- 
-                                                //FONCTION DIVERSE//
-
-/*
- * Description: system est une fonction qui execute une "shell built-in command" commande intégrée dans le shell
- * Idéal pour effacer les données sur l'interpréteur de commande avant de lancer notre programme.
- * Parameter :
- * char *command la commande à executer.
- * Return: Un entier qui interprète l'état de l'execution de la commande.
- */
-
-int system(const char *command); //  Execute a sell built-in cmd !
-
-
-
-
-/*
- * Description : max_x_y est une fonction qui mémorise la valeur de la coordonnée x ou y la plus grande parmi tous les noeuds du tableau de noeud nodes[].
- * Ça sert de point d'arrêt pour la boucle qui dessine l'instance de jeu.
- * Parameters:
- * -nb_nodes le nombre de noeuds dans le jeu
- * -nodes[] le tableau de noeuds du jeu
- * Return: la coordonnée la plus grande parmi toute les autres
- */
-int max_x_y(int nb_nodes, node nodes[]){
-
-   int max=0;
-
-   for (int i = 0;i<nb_nodes;i++){
-
-      if (get_x(nodes[i])>max)
-
-         max = get_x(nodes[i]);
-
-      if (get_y(nodes[i])>max)
-
-         max = get_y(nodes[i]);
-
-   }
-
-   return max;
-
-}
-
-
-
-
-
-
-/*
- * Description: intostr est une fonction qui converti un int choisi entre 1 et 4 et le transforme en un des 4 points cardinaux
- * Quand l'utilisateur intéragi avec le jeu il entre des entiers pour représenter ces choix cela vont alors être convertis
- * Return: Une des 4 points cardinaux
- */
-dir intostr(int i){ //Fonction qui converti le choix format int en une direction format str !
-
-   switch (i){
-
-      case 1:
-
-         return WEST;
-         break;
-
-      case 2:
-
-         return EAST;
-         break;
-
-
-      case 3:
-
-         return NORTH;
-         break;
-
-      case 4:
-
-         return SOUTH;
-         break;
-
-      default:
-         return EXIT_FAILURE;
-
-   }
-
-}
-
-
-
-
-
-
-/*
- * Description: printspace(x,y,..) affiche des espaces dans l'instance du jeu afin de représenter les trous laissé par les noeuds inexistant aux coordonnées x,y
- */
-void printspace(game g,int x,int y, int nb_nodes, node nodes[]){ // Print de l'espace pour représenter les pont inexistant !
-
-   int max = max_x_y(nb_nodes, nodes);
-
-   if (get_degree_dir(g,game_get_node_number(g,x-1,y),EAST)==0){
-
-      /* printf("CCCC"); */
-      for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
-
-         printf(" "); // On affiche le pont
-
-      int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
-
-      if (ind < max &&  game_get_node_number(g,ind,y) == -1){
-
-         while (game_get_node_number(g,ind,y) == -1 )
-
-            ind++; // on compte le nombres de trous entre deux noeuds
-
-         for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // Fonction linéaire 5 est le coefficient de proportionalité de de la formule par rapport à 'ind'
-
-            printf("C"); // On comble ces trous
-
-      }
-
-      if ( game_get_node_number(g,x+1,y) != -1)
-
-         printf("   "); //suivi d'espace pour l'esthétique
-
-   }
-
-}
-
-
-
-
-
-
-
+#include "game.h"
+#include "node.h"
+#include "hashi_solve.h"
+#include "fun.h"
+#include "menu.h"
+#include "load.h"
+#include "affichage.h"
 
 
                                          // PARTIE PRINTF INSTANCE DE JEU//
@@ -148,147 +18,33 @@ void printspace(game g,int x,int y, int nb_nodes, node nodes[]){ // Print de l'e
  * *g le jeu à afficher
  * *nodes[] le tableau de noeuds
  */
-void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int nb_dir){ /* Affiche l'instance de jeu créée */
 
-   int choix =0; int choix2=0; int coordx=0; int coordy=0; int node_num=0; // variables nécéssaire lors intéraction avec la machine
+void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Affiche l'instance de jeu créée */
+
+   int choix =0; int choix2=0; int coordx=0; int coordy=0; int node_num=0; int var = 0; // variables nécéssaire lors intéraction avec la machine
 
    char msg[256] = " "; // tableau de caractère qui stockera les messages d'erreurs
+   int* knox = &var;
+   *knox = 0;
+
+   int maxx = max_x(nb_nodes, g);
+   int maxy = max_y(nb_nodes, g);
+
+   int max = max2(maxx,maxy);
+
+      char **t; char **b;
+      t = malloc(nb_nodes * sizeof(char *));//allocation dynamique d'un tableau a deux dimensions
+      b = malloc(nb_nodes * sizeof(char *));
+      for(int i = 0; i <= maxx; i++){
+         t[i] = malloc(maxy * sizeof(char));
+         b[i] = malloc(maxy * sizeof(char));
+         for(int j = 0; j <= maxy; j++){
+            b[i][j] = ' ';
+            t[i][j] = ' ';
+   }}
 
    printf("\n");
-
-
-
-
-
-
-
-   
-
-                        /////////////////////////// PARTIE MENU /////////////////////
-
-  menu:
-      while (1){
-
-         system("clear");
-         
-         printf("%5s","- MENU -\n");
-
-      printf("\n");
-
-      printf("1 - Reprendre");
-
-      printf("\n");
-
-      printf("2 - Nouvelle partie");
-
-      printf("\n");
-
-      printf("3 - Sauvegarder instance");
-
-      printf("\n");
-
-      printf("4 - Sauvegarder partie en cours\n");
-
-      printf("5 - Solution\n");
-
-      printf("0 - Quitter\n");
-
-      printf("\n");
-
-
-      scanf("%d", &choix);
-
-      if( choix == 1 ){
-         int cmpt = 0;
-         for (int i = 0; i<nb_nodes; i++)
-            if (get_degree(g,i) > 0)
-               cmpt+=1;
-         if (cmpt >0)
-            goto debut;
-         }
-
-      if (choix == 2)
-         goto debut;
-
-      else if (choix == 3){
-
-         FILE *Fpointer;
-
-         Fpointer = fopen("save/game_default.txt","w");
-
-         if(Fpointer == NULL){
-            printf("Impossible d'ouvrir le fichier de sauvegarde, \n");
-            exit(EXIT_FAILURE);
-         }
-
-         else{
-            fprintf(Fpointer,"%d %d %d \n",nb_nodes,game_nb_max_bridges,nb_dir);
-            int compteur;
-
-            printf("Sauvegarde en cours ..\n");
-            system("sleep 1");
-
-            for (compteur = 0; compteur < nb_nodes; compteur++){
-               int x = get_x(nodes[compteur]);
-               int y = get_y(nodes[compteur]);
-               fprintf(Fpointer, "%d %d %d \n",x,y,get_required_degree(nodes[compteur]));
-            }
-         }
-         printf("(100%%) Le jeu a été sauvegardé\n");
-         fclose(Fpointer);
-         system("sleep 2");
-      }
-
-      else if (choix == 4){
-
-         FILE *Fpointer;
-         Fpointer = fopen("save/sauvegarde.txt","w");
-
-         if(Fpointer == NULL){
-            printf("Impossible d'ouvrir le fichier de sauvegarde, \n");
-            exit(EXIT_FAILURE);
-         }
-         
-         else{
-            fprintf(Fpointer,"%d %d %d \n",nb_nodes,game_nb_max_bridges,nb_dir);
-            int compteur;
-
-            printf("Sauvegarde en cours ..\n");
-            system("sleep 1");
-            
-            if (nb_dir == 4){
-               for (compteur = 0; compteur < nb_nodes; compteur++){
-                  int x = get_x(nodes[compteur]);
-                  int y = get_y(nodes[compteur]);
-                  fprintf(Fpointer,"%d %d %d %d %d %d %d \n",x,y,get_required_degree(nodes[compteur]), get_degree_dir(g,compteur,NORTH), get_degree_dir(g,compteur,WEST),get_degree_dir(g,compteur,SOUTH),get_degree_dir(g,compteur,EAST) );
-               }
-            }
-            if (nb_dir == 8){
-               for (compteur = 0; compteur < nb_nodes; compteur++){
-                  int x = get_x(nodes[compteur]);
-                  int y = get_y(nodes[compteur]);
-                  fprintf(Fpointer, "%d %d %d %d %d %d %d %d %d %d %d \n",x,y,get_required_degree(nodes[compteur]), get_degree_dir(g,compteur,NORTH), get_degree_dir(g,compteur,WEST), get_degree_dir(g,compteur,SOUTH), get_degree_dir(g,compteur,EAST), get_degree_dir(g,compteur,NW), get_degree_dir(g,compteur,SW), get_degree_dir(g,compteur,SE), get_degree_dir(g,compteur,NE));
-               }
-            }
-            printf("(100%%) Le jeu a été sauvegardé\n");
-            fclose(Fpointer);
-            system("sleep 2");
-         }
-      }
-      
-
-
-      else if (choix == 0){
-         system("clear");
-         exit(EXIT_SUCCESS);
-      }
-      }
-
-                 //////////////////////////////FIN MENU /////////////////////////////
-      
-
-     
-
+        
 
       ////////////////////////NOUVELLE PARTIE //////////////////////////
 
@@ -298,7 +54,11 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
    while (1){
       system("clear");
 
-      int max = max_x_y(nb_nodes, nodes);
+      *knox += 1;
+      
+
+      char texte[12] = "";
+
       printf("- Configuration du jeu -\n");
 
       printf("\n");
@@ -307,383 +67,52 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
       printf("\n");
 
-      printf("Nombre de directions autorisées : 8 \n");
+      printf("Nombre de directions autorisées : %d \n", game_nb_dir(g));
 
       printf("\n");
 
+      for (int s = 0 ; s< (max/3); s ++)
+      	printf(" %5s","");
+
       printf("     -----------------------------------------------------------------  \n");
+
+      for (int s = 0 ; s< (max/3); s ++)
+      	printf(" %5s","");
 
       printf("                                 HASHIWOKAKERO                          \n");
 
       printf("\n");
 
-      for (int y = max ; y>=0; y--){ // Boucle for utilisée car moins de test par rapport au while et plus maniable "ex:rajout des nodes vides"
-
-         for (int x = 0; x<=max; x++){
-
-            if (game_get_node_number(g,x,y)!= -1){ // Si le noeud existe
-
-               printf(" %d ",get_required_degree(nodes[game_get_node_number(g,x,y)])); // On affiche son degré
-
-
-
-
-
-
-
-                 //PARTIE PONT HORIZENTAL
-
-
-               if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) == 1 ){ // Si il y a 1 pont à ce noeud vers l'EST et que Le nombre
-                  // de ponts maximum n'est pas dépassé
-
-                  for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
-
-                     printf("-"); // On affiche le pont
-
-                  int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
-
-                  if (ind < max &&  game_get_node_number(g,ind,y) == -1){
-
-                     while (game_get_node_number(g,ind,y) == -1 )
-
-                        ind++; // on compte le nombres de trous entre deux noeuds
-
-                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // Fonction linéaire 5 est le coefficient de proportionalité de de la formule par rapport à 'ind'
-
-                        printf("-"); // On comble ces trous
-
-                  }
-
-               }
-
-
-
-
-               else if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) == 2 )  { // Si il y a 2 ponts à ce noeud vers l'EST
-
-                  for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
-
-                     printf("="); // On affiche un le pont
-
-                  int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
-
-                  if (ind < max &&  game_get_node_number(g,ind,y)==-1 ){
-
-                     while (game_get_node_number(g,ind,y)==-1)
-
-
-                        ind++;
-
-                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
-
-                        printf("=");
-
-                  }
-
-               }
-
-               else if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) == 3 )  { // Si il y a 2 ponts à ce noeud vers l'EST
-
-                  for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
-
-                     printf("*"); // On affiche un le pont
-
-                  int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
-
-                  if (ind < max &&  game_get_node_number(g,ind,y)==-1 ){
-
-                     while (game_get_node_number(g,ind,y)==-1)
-
-
-                        ind++;
-
-                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
-
-                        printf("*");
-
-                  }
-
-               }
-
-               else if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) == 4 )  { // Si il y a 2 ponts à ce noeud vers l'EST
-
-                  for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
-
-                     printf("#"); // On affiche un le pont
-
-                  int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
-
-                  if (ind < max &&  game_get_node_number(g,ind,y)==-1 ){
-
-                     while (game_get_node_number(g,ind,y)==-1)
-
-
-                        ind++;
-
-                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
-
-                        printf("#");
-
-                  }
-
-               }
-
-               else if ( get_degree_dir(g,game_get_node_number(g,x,y),EAST) > 4 )  { // Si il y a 2 ponts à ce noeud vers l'EST
-                  int bridge = get_degree_dir(g,game_get_node_number(g,x,y),EAST);
-
-                  for (int i=0;i<5;i++) // Pour i infèrieur à la distance entre deux noeuds qui ont des coordonnées consécutive sur x
-
-                     printf("%d",bridge); // On affiche un le pont
-
-                  int ind = x+1; // Méthode pour détecter les trous entre 2 noeuds
-
-                  if (ind < max &&  game_get_node_number(g,ind,y) == -1 ){
-
-                     while (game_get_node_number(g,ind,y)==-1)
-
-
-                        ind++;
-
-                     for (int i=0;i<(5*(ind-1))+(3*(ind-1));i++) // 5 = nombre de trait entre de node avec leur  consecutif, ind represente le nombre de fois a repeter l'operation
-
-                        printf("%d",bridge);
-
-                  }
-
-               }
-
-
-               if (get_degree_dir(g,game_get_node_number(g,x,y),EAST)==0)
-                  printf("     "); //suivi d'espace pour l'esthétique
-
+      for (int y = maxy ; y>=0; y--){
+         for (int x = 0; x<=maxx; x++){ 
+               if (game_get_node_number(g,x,y) != -1){
+                     sprintf(texte,"%d", get_required_degree(game_node(g,game_get_node_number(g,x,y)))); 
+                     t[x][y]=texte[0];
+                     }}}
+      
+      for (int y = maxy ; y>=0; y--){ 
+         for (int x = 0; x<=maxx; x++){
+            printf(" %c ",t[x][y]);
             }
-
-
-            else if(x>0 && game_get_node_number(g,x-1,y) != -1){ // Si le noeud n'existe pas pour (x,y) on affiche un espace
-
-               if (game_get_node_number(g,x,y-1) != -1 || game_get_node_number(g, x, y+1) != -1){
-
-                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 1) // On verifie qu'il existe un noeud aux deux etrémités
-                                                                                                                         // du pont et si ils ont un pont qui passe par le vide
-                     printf(" |");
-
-                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 2)
-
-                     printf(" H");
-
-                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 3)
-
-                     printf(" *");
-
-                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 4)
-
-                     printf(" #");
-
-                  if (game_get_node_number(g,x,y-1) != -1 && get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) > 4){
-
-                     int bridge = get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH);
-                     printf(" %d",bridge);
-
-                  }
-
-                  else printspace(g,x,y,nb_nodes,nodes);// On print l'espace si on tombe sur le cas par default
-
-               }
-
-            }
-         }
-
-
-
-
-	 // printf("\n");
-	 // printf("\n");
-	 // printf("\n");
-	 // printf("\n");
-	 printf("\n");
-
-               //PARTIE PONT VERTICAL | ou H
-
-	 int compteur=0;
-
-	 while (compteur != 5){
-
-           for (int x =0;x<=max;x++){
-
-
-            if (game_get_node_number(g,x,y) != -1 && game_get_node_number(g,x,y-1) != -1){ // Si le noeud et son voisin du bas existe
-	     
-
-
-               if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 1 || get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) == 1){
-		 // for (int i=0; i<=3; i++){
-		   printf(" |");
-		   printf("      ");
-		   // for (int i=0; i<x; i++){
-		   // printf("        ");
-		   // }
-		   //}
-		 
-		   //printf(" Q");
-		   //printf("      ");
-
-               }
-               else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 2){
-		 printf(" H");
-                 printf("      ");
-
-               }
-
-               else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 3){
-
-                  printf(" *");
-                  printf("      ");
-
-               }
-
-               else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 4){
-
-                  printf(" #");
-                  printf("      ");
-
-               }
-
-                else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) > 4){
-
-                   int bridge = get_degree_dir(g,game_get_node_number(g,x,y),SOUTH);
-                   printf(" %d",bridge);
-                  printf("      ");
-
-               }
-
-               else if (get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==0){
-
-                  printf("        ");
-
-               }
-
-            }
-
-            else if (game_get_node_number(g,x,y) != -1 && game_get_node_number(g,x,y-1) == -1){ // On dessine le pont qui traverse le vide laissé par le noeud inexistant
-
-               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH)==1 )){
-
-                  printf(" |");
-
-                  printf("      ");
-
-               }
-
-               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 2 )){
-
-                  printf(" H");
-
-                  printf("      ");
-
-               }
-
-               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 3 )){
-
-                  printf(" *");
-
-                  printf("      ");
-
-               }
-
-               if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) == 4 )){
-
-                  printf(" #");
-
-                  printf("      ");
-
-               }
-
-                if ((get_degree_dir(g,game_get_node_number(g,x,y),SOUTH) > 4 )){
-
-                   int bridge = get_degree_dir(g,game_get_node_number(g,x,y),SOUTH);
-
-                   printf(" %d",bridge);
-
-                   printf("      ");
-
-               }
-
-               else printf("      ");
-
-            }
-
-            else if (game_get_node_number(g,x,y) == -1){ // On print l'espace si on tombe sur le cas par default
-
-               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==1 ) )
-                  printf("   |");
-
-               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==2 ) )
-                  printf("   H");
-
-               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==3 ) )
-                  printf("   *");
-
-               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH)==4 ) )
-                  printf("   #");
-
-               if ( game_get_node_number(g,x,y-1) != -1 && (get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH) > 4 ) )
-                  printf("   %d",get_degree_dir(g,game_get_node_number(g,x,y-1),NORTH));
-
-            }
-
-           }
-	   
-	   
-
-
-
          printf("\n");
-	 compteur++;
-	 }
-	 
-
+         for (int x = 0; x<=maxx; x++)
+            printf(" %c ",b[x][y]);
+         printf("\n");
       }
+
+
+
+               //PARTIE PONT HORIZENTAL
+
+               
+               
 
 
 
 
 
                                                  // PARTIE INTERACTION//
-
       
-
-
-
-      /* int no=game_get_node_number(g, 1, 1);
-      printf("%d",no);
-      int testNE=get_neighbour_dir(g, no, NE);
-      printf("%d",testNE);
-      int testNW=get_neighbour_dir(g, no, NW);
-      printf("%d",testNW);
-      int testSE=get_neighbour_dir(g, no, SE);
-      printf("%d",testSE);
-      int testSW=get_neighbour_dir(g, no, SW);
-      printf("%d\n",testSW);
-     
-
-      int nb_max = 2;
-  
-      for (int y=nb_max; y>=0; y--){
-        for (int x=0; x<=nb_max; x++){
-          int nodenum=game_get_node_number(g,x,y);
-	  if (nodenum != -1){
-	    int node_deg=get_required_degree(nodes[nodenum]);
-	    printf("%d   ",node_deg);
-          }
-          else{
-	    printf("    ");
-	    }
-        }
-        printf("\n");
-	printf("\n");
-	printf("\n");
-	}*/
 
 
 
@@ -694,9 +123,10 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
       scanf("%d",&choix);
 
-      if (choix ==0)
-         goto menu;
-               ;
+      if (choix == 0){
+         menu(game_nb_nodes(g), g, game_nb_max_bridges, game_nb_dir(g));
+         break;
+      }
 
       if (choix == 1){
          printf("\n");
@@ -723,9 +153,10 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
          if ( can_add_bridge_dir(g,node_num,intostr(choix2)) && get_degree_dir(g,node_num,intostr(choix2)) < game_nb_max_bridges && choix2 < nb_dir ){ // On vérifie les condition nécéssaire
             add_bridge_dir(g,node_num,intostr(choix2));
+            draw_bridge(g,node_num,t, game_node(g,node_num), intostr(choix2));
 
          }
-         else if (!(can_add_bridge_dir(g,node_num,intostr(choix2))) || choix2 > nb_dir) {
+         else if (!(can_add_bridge_dir(g,node_num,choix2)) || choix2 > nb_dir) {
 
             sprintf(msg,"Vous ne pouvez pas ajouter de pont vers cette direction.\n");
 
@@ -811,18 +242,15 @@ void game_print(int nb_nodes,game g, node nodes[], int game_nb_max_bridges, int 
 
 
 
+
+
                                      //MAIN//
 
 int main(void){
    system("clear");  // execute a shel built-in cmd !!
 
-   int tnodes [7][3]= {{0,0,3},{0,1,5},{0,2,2},{1,1,1},{1,2,2},{2,0,2},{2,2,3}};
-   node nodes[7]; // Tableau de nodes
-   for (int i=0;i<7;i++)
-      nodes[i]= new_node(tnodes[i][0],tnodes[i][1],tnodes[i][2]); //On rempli le tableau de node !
-
-   game g = new_game(7, nodes,6,8);
-   game_print(7,g, nodes,(game_nb_max_bridges(g)),8);
+   game g = load_default_game("map/game_medium.txt");
+   menu(game_nb_nodes(g), g, game_nb_max_bridges(g), game_nb_dir(g));   
 
    if(game_over(g)){
       printf("\n");
