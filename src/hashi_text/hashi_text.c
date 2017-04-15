@@ -107,13 +107,7 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
                
                
 
-
-
-
-
                                                  // PARTIE INTERACTION//
-      
-
 
 
       printf(" %s\n",msg); // Print le message d'erreur
@@ -234,6 +228,13 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
          }
          else goto sup;
       }
+      if(game_over(g)){
+      printf("\n");
+      printf("\n");
+      printf("Félicitation vous avez gagné               \n");
+      system("sleep 2");
+      break;
+   }
    }
 }
 
@@ -252,12 +253,7 @@ int main(void){
    game g = load_default_game("map/game_medium.txt");
    menu(game_nb_nodes(g), g, game_nb_max_bridges(g), game_nb_dir(g));   
 
-   if(game_over(g)){
-      printf("\n");
-      printf("\n");
-      printf("GAME OVER                            \n");
-   }
-   else if(!game_over(g)){
+   if(!game_over(g)){
       printf("\n");
       printf("YOU LOSE !\n");
    }

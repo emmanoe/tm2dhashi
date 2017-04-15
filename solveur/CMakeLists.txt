@@ -17,9 +17,11 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 include_directories(${CMAKE_SOURCE_DIR}/src/solveur)
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 
-add_executable(hashi_solve ${CMAKE_SOURCE_DIR}/src/solveur/hashi_solve.c ${CMAKE_SOURCE_DIR}/src/node.c ${CMAKE_SOURCE_DIR}/src/game.c)
+add_executable(hashi_solve 
+	${CMAKE_SOURCE_DIR}/src/solveur/hashi_solve.c ${CMAKE_SOURCE_DIR}/src/game.c ${CMAKE_SOURCE_DIR}/src/node.c ${CMAKE_SOURCE_DIR}/src/solveur/main.c)
 
 target_link_libraries(hashi_solve m hashi)
 
