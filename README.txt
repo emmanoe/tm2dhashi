@@ -1,6 +1,6 @@
 ==== HASHI ====
 
-Dans ce dépot vous trouverez deux exécutables du jeu HASHIWOKAKERO.
+Dans ce dépot vous trouverez, après compilation, deux exécutables du jeu HASHIWOKAKERO.
 La première version est la version texte (hashi_graph) jouable directement dans 
 le terminal et la seconde est la version graphique (hashi_sdl2) compilé à l'aide 
 la bibliothèque SDL2.
