@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "game.h"
-#include "node.h"
-#include "hashi_solve.h"
-#include "fun.h"
 
 /* **************************************************************** */
+/*
+ * Description: game_print afiche le jeu créé sur l'interpréteur de commande
+ * Parameters:
+ * *g le jeu à afficher
+ */
 
 void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir);
 
