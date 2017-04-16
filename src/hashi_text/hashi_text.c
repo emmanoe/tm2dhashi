@@ -12,31 +12,22 @@
                                      
 /* **************************************************************** */
 
-
 void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Affiche l'instance de jeu créé */
-
-   char **t; 
-   t = malloc(nb_nodes * sizeof(char *));//allocation dynamique d'un tableau a deux dimensions
-   int maxx = max_x(nb_nodes, g);
-   int maxy = max_y(nb_nodes, g);
-   int max = max2(maxx,maxy);
-
-   for(int i = 0; i <= maxx*2; i++){
-   	t[i] = malloc(maxy*2 * sizeof(char));
-      for(int j = 0; j <= maxy*2; j++){
-         t[i][j] = ' ';}}
-        
 
       ////////////////////////NOUVELLE PARTIE //////////////////////////
 
-  debut: //étiquette début pour éviter de quitter le jeu à chaque fois !!
+ 
+   char **t; 
+   t = malloc(game_nb_nodes(g) * sizeof(char *));//allocation dynamique d'un tableau a deux dimensions
+   for(int i = 0; i <= maxx*2; i++){
+      t[i] = malloc(maxy*2 * sizeof(char));
+      for(int j = 0; j <= maxy*2; j++){
+         t[i][j] = ' ';}}
 
+debut: //étiquette début pour éviter de quitter le jeu à chaque fois !!
 
    while (1){
       system("clear");
-      
-
-      char texte[12] = "";
 
       printf("- Configuration du jeu -\n");
 
@@ -50,6 +41,10 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
 
       printf("\n");
 
+      int maxx = max_x(nb_nodes, g);
+      int maxy = max_y(nb_nodes, g);
+      int max = max2(maxx,maxy);
+
       for (int s = 0 ; s< (max/3); s ++)
       	printf(" %5s","");
 
@@ -62,19 +57,7 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
 
       printf("\n");
 
-      for (int y = maxy ; y>=0; y--){
-         for (int x = 0; x<=maxx; x++){ 
-               if (game_get_node_number(g,x,y) != -1){
-                     sprintf(texte,"%d", get_required_degree(game_node(g,game_get_node_number(g,x,y)))); 
-                     t[x*2][y*2]=texte[0];
-                     }}}
-      
-      for (int y = maxy*2 ; y>=0; y--){ 
-         for (int x = 0; x<=maxx*2; x++){
-            printf(" %c ",t[x][y]);
-            }
-         printf("\n");
-      }
+      draw_map(t,maxx,maxy,g);
 
 
 
@@ -156,6 +139,7 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
 
          if (choix==1 && get_degree_dir(g,node_num,intostr(choix2))>0){
             del_bridge_dir(g,node_num,intostr(choix2));
+            draw_map(t,maxx,maxy,g);
          }
 
          else if (choix == 1 && get_degree(g,node_num)==0){
@@ -209,8 +193,7 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
       printf("\n");
       printf("Félicitation vous avez gagné               \n");
       system("sleep 2");
-      break;
-   }
+      break;}
    }
 }
 
@@ -226,8 +209,9 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
 int main(void){
    system("clear");  // execute a shel built-in cmd !!
 
-   game g = load_default_game("map/game_medium.txt");
-   menu(game_nb_nodes(g), g, game_nb_max_bridges(g), game_nb_dir(g));   
+   game g = load_default_game("map/game_default.txt");
+   menu(game_nb_nodes(g), g, game_nb_max_bridges(g), game_nb_dir(g));  
+   game_print(game_nb_nodes(g), g, game_nb_max_bridges(g), game_nb_dir(g)); 
 
    if(!game_over(g)){
       printf("\n");

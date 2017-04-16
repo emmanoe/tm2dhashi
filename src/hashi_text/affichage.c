@@ -66,6 +66,22 @@ switch(d){
 		x+=h;
 		y+=v;
 	}
+}
 
-
+char ** draw_map(char ** t, int maxx, int maxy, game g){
+    char texte[12] = "";
+	for (int y = maxy ; y>=0; y--){
+         for (int x = 0; x<=maxx; x++){ 
+               if (game_get_node_number(g,x,y) != -1){
+                     sprintf(texte,"%d", get_required_degree(game_node(g,game_get_node_number(g,x,y)))); 
+                     t[x*2][y*2]=texte[0];
+                     }}}
+      
+      for (int y = maxy*2 ; y>=0; y--){ 
+         for (int x = 0; x<=maxx*2; x++){
+            printf(" %c ",t[x][y]);
+            }
+         printf("\n");
+      }
+      return t;
 }

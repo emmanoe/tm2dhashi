@@ -48,7 +48,9 @@
          int value = 0;
          for (int i= 0; i< nb ; i++){
             if (get_degree(g,i) > 0){value = i;break;}}
-         if (get_degree(g,value) >0)break;}
+         if (get_degree(g,value) >0){
+
+         }break;}
 
       else if (choix == 2){
          for (int i = 0; i<game_nb_nodes(g);i++){
@@ -131,8 +133,7 @@
 
       else if (choix == 0)
          return;
-      }
-         game_print(nb_nodes, g, game_nb_max_bridges, nb_dir);      
+      }    
       }
 
       //////////////////////////////FIN MENU /////////////////////////////
