@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[french]{babel}
+\title{Rapport projet HASHIWOKAKERO}
+\author{DELAR Emmanoe}
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+
+\newpage
+\section{Introduction}
+Lors de ce projet, en petit groupe, nous avions pour objectif de d\'evelopper un programme en langage C se basant sur le principe du jeu Hashiwokakero. Au bout de la deuxi\`eme s\'eance, mon groupe s'est d\'ecompos\'e et je me suis retrouv\'e seul. 
+\newline Afin de finir dans les d\'elais impartis, j'ai d\^u organiser le travail en plusieurs petits modules (impl\'ementation de la librairie Game, version 1, version 2, tests, solveur, version graphique SDL2, portage Android), dans cet ordre de d\'eveloppement. L'une de mes priorit\'es \'etait l'application \`a produire un code optimis\'e et simple \`a lire, j'ai aussi port\'e une attention particuli\`ere \`a ce que mon archive soit propre et bien organis\'ee. 
+\newline
+Tout au long de l'ann\'ee, nos enseigants nous ont pr\'esent\'es plusieurs outils \'efficaces et n\'ecessessaires afin d'obtenir un programme optimal et un code de qualit\'e. L'objectif \'etant de maitriser la base de la programmation en langage C.
+\newline
+Dans ce rapport, je vais vous pr\'esenter ces outils et les diff\'erentes \'etapes qui m'ont permis de r\'ealiser ce projet.
+
+\section{Pr\'esentation du jeu}
+	\subsection{R\`egle du jeu HASHIWOKAKERO}
+	Hashiwokakero est un jeu de logique qui se joue sur une grille rectangulaire. Dans cette grille, on retrouve des cercles entourant des chiffres allant de 1 à 8. Ces cercles sont appel\'es \^iles (nodes ou noeuds dans notre cas) et les chiffres sont les degr\'es de chaque nodes. Le but du jeu est de relier toutes les \^iles en un seul groupe en cr\'eant une série de ponts (simples ou doubles) entre les \^iles. Le jeu \'etant termin\'e lorsque chaque node est reli\'e aux autres avec un nombre de ponts \'egal à son degr\'e.
+	Ci-dessous un exemple du jeu r\'esolu :
+	\begin{figure}[!h]
+		\centering
+		\includegraphics[height=4cm]{ex_game.PNG}
+		\caption{ Jeu résolu.}
+	\end{figure}
+
+	\subsection{Caprice du client}
+	Dans le jeu Hashiwokakero "officiel", il y a au plus 2 ponts entre 2 \^iles et les ponts sont soit verticaux, soit horizontaux. Dans la "v2" le nombre de ponts variera et ont pourra avoir des ponts obliques.
+
+\section{Impl\'ementation de la biblioth\'eque Game}
+Une biblioth\`eque en informatique est un regroupement de fonctions pouvant \^etre utilis\'e par diff\'errents programmes. Dans notre cas, un fichier "header" (game.h) nous pr\'esentait ces fonctions. Ce fichier avait la valeur d'un cahier des charges qui formulait les besoins d'un client. On avait pas \`a le modifier.
+	\subsection{Structures et \'enum\'erations}
+	Le language C nous permet de cr\'eer nos propre types de variables. Pour la biblioth\`eque Game, on en a utilis\'e deux sortes: les structures et les \'enum\'erations. 
+	\newline La structure "game\_s" de ma biblioth\`eque contient des varialbles de diff\'erents types. Chaque variable stocke les informations n\'ecessaires afin de generer une grille de jeu. On y retrouve: le nombre de noeuds, un tableau de taille dynamique qui stocke ces noeuds, un tableau \`a deux dimensions (x et y)  qui g\`ere les ponts reliant les diff\'erents noeuds, un entier repr\'esentant le nombre maximal de ponts et un autre le nombre de directions autoris\'ees pour la partie. 
+		
+	\subsection{Programmation du jeu en version texte}
+	\subsection{Extension de la lib "caprice du client"}
+	\subsection{Solveur}
+\section{Version graphique: SDL2}
+\newpage
+\section{Conclusion} 
+Sur une p\'eriode de deux semestres, les diff\'erents programmes que j'ai d\'evelopp\'e, r\'epondent bien au cachier des charges impos\'e par le client. \`A l'aide de diff\'erents outils (gdb, valgrind, git, gcov, CMake) et \`a l'organisation sous forme de plusieurs petits modules, j'ai pu mener \`a bien ce projet.
+\newline Toutefois, certains programmes propos\'es ne sont pas les plus sophistiqu\'es faute de temps. Par exemple pour le solveur, l'algorithme ultilis\'e est de type naif (Bruteforce). En effet, pour r\'esoudre une instance, ce dernier teste tous les cas un \`a un jusqu'\`a ce qu'il trouve une bonne combinaison. Cependant il peut s'av\'erer \'efficace sur les petites instances de jeu. Une des solutions face \`a ce probl\`eme est d'\'ecrire un programme qui joue un maximum de coup obligatoire avant le solveur. Il manque donc un travail d'optimisation.
+\newline En prenant du recul, je peux dire que le projet m'a apport\'e un bagage supplémentaire. J'ai consolid\'e mes connaissances g\'en\'erales sur le language C et appris \`a coder \`a un niveau sup\'erieur.
+
+\end{document}
