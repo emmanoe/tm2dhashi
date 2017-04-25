@@ -16,7 +16,11 @@ void game_print(int nb_nodes,game g, int game_nb_max_bridges, int nb_dir){ /* Af
 
       ////////////////////////NOUVELLE PARTIE //////////////////////////
 
- 
+   int maxx = max_x(nb_nodes, g);
+   int maxy = max_y(nb_nodes, g);
+   int max = max2(maxx,maxy);
+
+
    char **t; 
    t = malloc(game_nb_nodes(g) * sizeof(char *));//allocation dynamique d'un tableau a deux dimensions
    for(int i = 0; i <= maxx*2; i++){
@@ -40,10 +44,6 @@ debut: //étiquette début pour éviter de quitter le jeu à chaque fois !!
       printf("Nombre de directions autorisées : %d \n", game_nb_dir(g));
 
       printf("\n");
-
-      int maxx = max_x(nb_nodes, g);
-      int maxy = max_y(nb_nodes, g);
-      int max = max2(maxx,maxy);
 
       for (int s = 0 ; s< (max/3); s ++)
       	printf(" %5s","");
