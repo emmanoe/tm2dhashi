@@ -126,7 +126,7 @@ bool test_game_node() {
 bool test_game_over(){
    // Example node fonction game over
 
-   int vals[4][3] = {{0,0,2},{0,1,2},{1,0,2},{1,1,2}};
+   int vals[4][3] = {{0,0,2},{0,1,2},{1,0,1},{1,1,1}};
    node nodes[4];
 
    bool r = true;
@@ -140,13 +140,17 @@ bool test_game_over(){
    if (can_add_bridge_dir(g, 0, EAST)){
 
       add_bridge_dir(g, 0, EAST);
-      add_bridge_dir(g, 0, EAST);
+
+   }
+
+   if (can_add_bridge_dir(g, 0, NORTH)){
+
+      add_bridge_dir(g, 0, NORTH);
 
    }
 
    if (can_add_bridge_dir(g, 1, EAST)){
 
-      add_bridge_dir(g, 1, EAST);
       add_bridge_dir(g, 1, EAST);
 
    }
