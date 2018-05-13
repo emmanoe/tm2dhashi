@@ -1,8 +1,8 @@
-                          ==== HASHI ====
+#                          ==== HASHI ====
 
 Dans ce dépot vous trouverez, après compilation, deux exécutables du jeu HASHIWOKAKERO.
-La première version est la version texte (hashi_graph) jouable directement dans 
-le terminal et la seconde est la version graphique (hashi_sdl2) compilé à l'aide 
+La première version est la version texte (hashi_graph) jouable directement dans
+le terminal et la seconde est la version graphique (hashi_sdl2) compilé à l'aide
 la bibliothèque SDL2.
 
 ### Dependences
@@ -34,16 +34,10 @@ $ ./hashi_graph/nom-du-fichier.txt
  ### Autre
 
  1 - Un solveur récursif est aussi disponible dans le dossier solveur/
- Pour l'exécuter, il suffit de lancer aprés la compilation 
+ Pour l'exécuter, il suffit de lancer aprés la compilation
 
  $ ./hashi_solve/le_nom_du_fichier.txt
 
  2 - Les differentes instances du jeu ce trouve dans le dossier map/
 
  3 - Exécuter le script ./cleanbuil.sh pour suprimer tous les exécutables générés
-
-
-
-
-
-
