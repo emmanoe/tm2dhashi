@@ -19,7 +19,7 @@ https://cmake.org/download/
 
 Avec CMake: (Pour ne pas polluer le dépôt il est préférable de creer un dossier build)
 
-> `$ cd build ; cmake .. ; make ; make install ; cd .. ;``
+> `$ cd build ; cmake .. ; make ; make install ; cd .. ;`
 
 
 
