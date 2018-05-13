@@ -17,8 +17,9 @@ https://cmake.org/download/
 
 # Compilation
 
-Avec CMake: (Pour ne pas polluer le dépôt il est préférable de creer un dossier build)
+Pour ne pas polluer le dépôt il est préférable de creer un dossier build
 
+> `$ mkdir build`
 > `$ cd build ; cmake .. ; make ; make install ; cd .. ;`
 
 
