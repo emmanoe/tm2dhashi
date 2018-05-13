@@ -1,4 +1,6 @@
-<p align="center">   <b> ==== HASHI ====  </b> </p>
+<p align="center">   
+# ==== HASHI ====
+</p>
 
 Dans ce dépot vous trouverez, après compilation, deux exécutables du jeu HASHIWOKAKERO.
 La première version est la version texte (hashi_graph) jouable directement depuis
