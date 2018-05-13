@@ -44,7 +44,7 @@ Sélectionner les deux iles que vous voulez relier à l'aide des options propos�
  1 - Un solveur récursif est aussi disponible dans le dossier solveur/
  Pour l'exécuter, il suffit de lancer aprés la compilation
 
- >`$ ./hashi_solve/instance.txt`
+ >`$ ./hashi_solve/instance-choisie.txt`
 
  2 - Les differentes instances du jeu ce trouve dans le dossier map/
 
