@@ -1,11 +1,13 @@
 <p align="center">   <b> ==== HASHI ====  </b> </p>
 
 Dans ce dépot vous trouverez, après compilation, deux exécutables du jeu HASHIWOKAKERO.
-La première version est la version texte (hashi_graph) jouable directement dans
+La première version est la version texte (hashi_graph) jouable directement depuis
 le terminal et la seconde est la version graphique (hashi_sdl2) compilé à l'aide
-la bibliothèque SDL2.
+la bibliothèque graphique SDL2.
 
 ### Dependences
+
+# Paquet SDL (version 2.0 ou supérieur)
 
 $ sudo apt-get install libsdl2-dev libsdl2-image-dev  libsdl2-ttf-dev
 
